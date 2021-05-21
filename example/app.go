@@ -8,16 +8,16 @@ import (
 	evmClient "github.com/ChainSafe/chainbridge-eth-module"
 	subClient "github.com/ChainSafe/chainbridge-substrate-module"
 
-	"github.com/ChainSafe/chainbridge-example/example/keystore"
-	"github.com/ChainSafe/chainbridgev2/chains/evm"
-	"github.com/ChainSafe/chainbridgev2/chains/evm/listener"
-	"github.com/ChainSafe/chainbridgev2/chains/evm/writer"
-	"github.com/ChainSafe/chainbridgev2/chains/substrate"
-	subListener "github.com/ChainSafe/chainbridgev2/chains/substrate/listener"
-	subWriter "github.com/ChainSafe/chainbridgev2/chains/substrate/writer"
-	"github.com/ChainSafe/chainbridgev2/crypto/sr25519"
-	"github.com/ChainSafe/chainbridgev2/lvldb"
-	"github.com/ChainSafe/chainbridgev2/relayer"
+	"github.com/ChainSafe/chainbridge-core-example/example/keystore"
+	"github.com/ChainSafe/chainbridge-core/chains/evm"
+	"github.com/ChainSafe/chainbridge-core/chains/evm/listener"
+	"github.com/ChainSafe/chainbridge-core/chains/evm/writer"
+	"github.com/ChainSafe/chainbridge-core/chains/substrate"
+	subListener "github.com/ChainSafe/chainbridge-core/chains/substrate/listener"
+	subWriter "github.com/ChainSafe/chainbridge-core/chains/substrate/writer"
+	"github.com/ChainSafe/chainbridge-core/crypto/sr25519"
+	"github.com/ChainSafe/chainbridge-core/lvldb"
+	"github.com/ChainSafe/chainbridge-core/relayer"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/rs/zerolog/log"
 )
@@ -58,7 +58,7 @@ func Run() error {
 		panic(err)
 	}
 	evmListener := listener.NewEVMListener(ethClient)
-	evmListener.RegisterHandler("0x3167776db165D8eA0f51790CA2bbf44Db5105ADF", listener.HandleErc20DepositedEvent)
+	evmListener.RegisterHandler("0x3167776db165D8eA0f51790CA2bbf44Db5105ADF", evmClient.HandleErc20DepositedEvent)
 
 	evmWriter := writer.NewWriter(ethClient)
 	evmWriter.RegisterProposalHandler("0x3167776db165D8eA0f51790CA2bbf44Db5105ADF", writer.ERC20ProposalHandler)

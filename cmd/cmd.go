@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/ChainSafe/chainbridge-example/example"
+	"github.com/ChainSafe/chainbridge-core-example/example"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )

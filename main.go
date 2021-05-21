@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/ChainSafe/chainbridge-example/cmd"
+	"github.com/ChainSafe/chainbridge-core-example/cmd"
 )
 
 func main() {
