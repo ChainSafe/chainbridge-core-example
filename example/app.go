@@ -8,6 +8,8 @@ import (
 	evmClient "github.com/ChainSafe/chainbridge-eth-module"
 	subClient "github.com/ChainSafe/chainbridge-substrate-module"
 
+	evmClientConfig "github.com/ChainSafe/chainbridge-eth-module/config"
+
 	"github.com/ChainSafe/chainbridge-core-example/example/keystore"
 	"github.com/ChainSafe/chainbridge-core/chains/evm"
 	"github.com/ChainSafe/chainbridge-core/chains/evm/listener"
@@ -53,17 +55,22 @@ func Run() error {
 		panic(err)
 	}
 
-	ethClient, err := evmClient.NewEVMClient(TestEndpoint, false, AliceKp)
+	evmCfg, err := evmClientConfig.GetConfig(".")
+	if err != nil {
+		panic(err)
+	}
+
+	ethClient, err := evmClient.NewEVMClient(evmCfg, AliceKp)
 	if err != nil {
 		panic(err)
 	}
 	evmListener := listener.NewEVMListener(ethClient)
-	evmListener.RegisterHandler("0x3167776db165D8eA0f51790CA2bbf44Db5105ADF", evmClient.HandleErc20DepositedEvent)
+	evmListener.RegisterHandlerFabric(evmCfg.Erc20Handler, ethClient.ReturnErc20HandlerFabric)
 
 	evmWriter := writer.NewWriter(ethClient)
-	evmWriter.RegisterProposalHandler("0x3167776db165D8eA0f51790CA2bbf44Db5105ADF", writer.ERC20ProposalHandler)
+	evmWriter.RegisterProposalHandler(evmCfg.Erc20Handler, writer.ERC20ProposalHandler)
 
-	evmChain := evm.NewEVMChain(evmListener, evmWriter, db, "0x62877dDCd49aD22f5eDfc6ac108e9a4b5D2bD88B", 0)
+	evmChain := evm.NewEVMChain(evmListener, evmWriter, db, evmCfg.Bridge, 0)
 	if err != nil {
 		panic(err)
 	}

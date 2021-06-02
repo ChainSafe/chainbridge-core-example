@@ -2,8 +2,10 @@ module github.com/ChainSafe/chainbridge-core-example
 
 go 1.16
 
+replace github.com/ChainSafe/chainbridge-eth-module v0.0.0-20210521100422-24b8768656d3 => ../chainbridge-eth-module
+
 require (
-	github.com/ChainSafe/chainbridge-core v0.0.0-20210521100444-4112d971d977
+	github.com/ChainSafe/chainbridge-core v0.0.0-20210602125535-8f78a5e6de69
 	github.com/ChainSafe/chainbridge-eth-module v0.0.0-20210521100422-24b8768656d3
 	github.com/ChainSafe/chainbridge-substrate-module v0.0.0-20210521092722-d2ee3d9d63cc
 	github.com/centrifuge/go-substrate-rpc-client v2.0.0+incompatible
