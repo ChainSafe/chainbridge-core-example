@@ -32,6 +32,7 @@ keys/
 # Chainbridge
 config.toml
 config.json
+subConfig.json
 *.block
 gethdata1/
 gethdata2/

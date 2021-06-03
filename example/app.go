@@ -1,6 +1,9 @@
 package example
 
 import (
+
+	//evmClientConfig "github.com/ChainSafe/chainbridge-eth-module/config"
+
 	"os"
 	"os/signal"
 	"syscall"
@@ -8,7 +11,6 @@ import (
 	evmClient "github.com/ChainSafe/chainbridge-eth-module"
 	subClient "github.com/ChainSafe/chainbridge-substrate-module"
 
-	evmClientConfig "github.com/ChainSafe/chainbridge-eth-module/config"
 	subClientConfig "github.com/ChainSafe/chainbridge-substrate-module/config"
 
 	"github.com/ChainSafe/chainbridge-core-example/example/keystore"
@@ -56,7 +58,7 @@ func Run() error {
 		panic(err)
 	}
 
-	evmCfg, err := evmClientConfig.GetConfig(".")
+	evmCfg, err := evm.GetConfig(".", "config")
 	if err != nil {
 		panic(err)
 	}
@@ -71,7 +73,7 @@ func Run() error {
 	evmWriter := writer.NewWriter(ethClient)
 	evmWriter.RegisterProposalHandler(evmCfg.Erc20Handler, writer.ERC20ProposalHandler)
 
-	evmChain := evm.NewEVMChain(evmListener, evmWriter, db, evmCfg.Bridge, evmCfg.ChainId)
+	evmChain := evm.NewEVMChain(evmListener, evmWriter, db, evmCfg.Bridge, evmCfg.ChainConfig.ChainId)
 	if err != nil {
 		panic(err)
 	}
