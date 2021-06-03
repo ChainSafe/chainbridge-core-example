@@ -1,9 +1,6 @@
 package example
 
 import (
-
-	//evmClientConfig "github.com/ChainSafe/chainbridge-eth-module/config"
-
 	"os"
 	"os/signal"
 	"syscall"
@@ -11,13 +8,12 @@ import (
 	evmClient "github.com/ChainSafe/chainbridge-eth-module"
 	subClient "github.com/ChainSafe/chainbridge-substrate-module"
 
-	subClientConfig "github.com/ChainSafe/chainbridge-substrate-module/config"
-
 	"github.com/ChainSafe/chainbridge-core-example/example/keystore"
 	"github.com/ChainSafe/chainbridge-core/chains/evm"
 	"github.com/ChainSafe/chainbridge-core/chains/evm/listener"
 	"github.com/ChainSafe/chainbridge-core/chains/evm/writer"
 	"github.com/ChainSafe/chainbridge-core/chains/substrate"
+
 	subListener "github.com/ChainSafe/chainbridge-core/chains/substrate/listener"
 	subWriter "github.com/ChainSafe/chainbridge-core/chains/substrate/writer"
 	"github.com/ChainSafe/chainbridge-core/crypto/sr25519"
@@ -78,18 +74,18 @@ func Run() error {
 		panic(err)
 	}
 
-	subCfg, err := subClientConfig.GetConfig(".")
+	subCfg, err := substrate.GetConfig(".", "subConfig")
 	if err != nil {
 		panic(err)
 	}
 
-	kp, err := keystore.KeypairFromAddress(subCfg.From, keystore.SubChain, "alice", true)
+	kp, err := keystore.KeypairFromAddress("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY", keystore.SubChain, "alice", true)
 	if err != nil {
 		panic(err)
 	}
 	krp := kp.(*sr25519.Keypair).AsKeyringPair()
 
-	subC, err := subClient.NewSubstrateClient(subCfg.Endpoint, krp, stopChn)
+	subC, err := subClient.NewSubstrateClient("ws://localhost:9944", krp, stopChn)
 	if err != nil {
 		panic(err)
 	}
