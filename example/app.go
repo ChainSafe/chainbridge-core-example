@@ -70,7 +70,7 @@ func Run() error {
 	evmWriter := writer.NewWriter(ethClient)
 	evmWriter.RegisterProposalHandler(evmCfg.Erc20Handler, writer.ERC20ProposalHandler)
 
-	evmChain := evm.NewEVMChain(evmListener, evmWriter, db, evmCfg.Bridge, 0)
+	evmChain := evm.NewEVMChain(evmListener, evmWriter, db, evmCfg.Bridge, evmCfg.ChainId)
 	if err != nil {
 		panic(err)
 	}
