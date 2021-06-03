@@ -79,13 +79,13 @@ func Run() error {
 		panic(err)
 	}
 
-	kp, err := keystore.KeypairFromAddress("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY", keystore.SubChain, "alice", true)
+	kp, err := keystore.KeypairFromAddress(subCfg.From, keystore.SubChain, "alice", true)
 	if err != nil {
 		panic(err)
 	}
 	krp := kp.(*sr25519.Keypair).AsKeyringPair()
 
-	subC, err := subClient.NewSubstrateClient("ws://localhost:9944", krp, stopChn)
+	subC, err := subClient.NewSubstrateClient(subCfg.ChainConfig.Endpoint, krp, stopChn)
 	if err != nil {
 		panic(err)
 	}
@@ -98,7 +98,7 @@ func Run() error {
 	subL.RegisterSubscription(relayer.NonFungibleTransfer, subListener.NonFungibleTransferHandler)
 
 	subW.RegisterHandler(relayer.FungibleTransfer, subWriter.CreateFungibleProposal)
-	subChain := substrate.NewSubstrateChain(subL, subW, db, 1)
+	subChain := substrate.NewSubstrateChain(subL, subW, db, subCfg.ChainConfig.ChainId)
 
 	r := relayer.NewRelayer([]relayer.RelayedChain{evmChain, subChain})
 
