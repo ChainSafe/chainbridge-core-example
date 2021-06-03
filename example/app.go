@@ -9,6 +9,7 @@ import (
 	subClient "github.com/ChainSafe/chainbridge-substrate-module"
 
 	evmClientConfig "github.com/ChainSafe/chainbridge-eth-module/config"
+	subClientConfig "github.com/ChainSafe/chainbridge-substrate-module/config"
 
 	"github.com/ChainSafe/chainbridge-core-example/example/keystore"
 	"github.com/ChainSafe/chainbridge-core/chains/evm"
@@ -75,13 +76,18 @@ func Run() error {
 		panic(err)
 	}
 
-	kp, err := keystore.KeypairFromAddress("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY", keystore.SubChain, "alice", true)
+	subCfg, err := subClientConfig.GetConfig(".")
+	if err != nil {
+		panic(err)
+	}
+
+	kp, err := keystore.KeypairFromAddress(subCfg.From, keystore.SubChain, "alice", true)
 	if err != nil {
 		panic(err)
 	}
 	krp := kp.(*sr25519.Keypair).AsKeyringPair()
 
-	subC, err := subClient.NewSubstrateClient("ws://localhost:9944", krp, stopChn)
+	subC, err := subClient.NewSubstrateClient(subCfg.Endpoint, krp, stopChn)
 	if err != nil {
 		panic(err)
 	}

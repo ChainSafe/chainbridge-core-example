@@ -38,8 +38,6 @@ github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym
 github.com/ChainSafe/chainbridge-core v0.0.0-20210520113638-fb0ff8dc9606/go.mod h1:VMwP2MxvCsV1Sa5N/9gmMUxjXv/D0FJJrlF23PI6S4U=
 github.com/ChainSafe/chainbridge-core v0.0.0-20210602125535-8f78a5e6de69 h1:aIZ93WZwah36YxQ/qf2IolJjKRBD4X89sESQ0sKF0nI=
 github.com/ChainSafe/chainbridge-core v0.0.0-20210602125535-8f78a5e6de69/go.mod h1:VMwP2MxvCsV1Sa5N/9gmMUxjXv/D0FJJrlF23PI6S4U=
-github.com/ChainSafe/chainbridge-substrate-module v0.0.0-20210521092722-d2ee3d9d63cc h1:znUSN0XGv/g0pGdb+9l18Pjwn1IlMsXEdBshSyO5VpM=
-github.com/ChainSafe/chainbridge-substrate-module v0.0.0-20210521092722-d2ee3d9d63cc/go.mod h1:qUEDVU/Mjs5WcHgpC4KWDrxikkuHsWVh0DzCizq1VY0=
 github.com/DATA-DOG/go-sqlmock v1.3.3/go.mod h1:f/Ixk793poVmq4qj/V1dPUg2JEAKC73Q5eFN3EC/SaM=
 github.com/OneOfOne/xxhash v1.2.2/go.mod h1:HSdplMjZKSmBqAxg5vPj2TmRDmfkzw+cTzAElWljhcU=
 github.com/StackExchange/wmi v0.0.0-20180116203802-5d049714c4a6 h1:fLjPD/aNc3UIOA6tDi6QXUemppXK3P9BI7mr2hd6gx8=
