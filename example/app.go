@@ -1,6 +1,7 @@
 package example
 
 import (
+	"errors"
 	"os"
 	"os/signal"
 	"syscall"
@@ -9,6 +10,7 @@ import (
 	subClient "github.com/ChainSafe/chainbridge-substrate-module"
 
 	"github.com/ChainSafe/chainbridge-core-example/example/keystore"
+	"github.com/ChainSafe/chainbridge-core/chains"
 	"github.com/ChainSafe/chainbridge-core/chains/evm"
 	"github.com/ChainSafe/chainbridge-core/chains/evm/listener"
 	"github.com/ChainSafe/chainbridge-core/chains/evm/writer"
@@ -54,53 +56,65 @@ func Run() error {
 		panic(err)
 	}
 
-	evmCfg, err := evm.GetConfig(".", "config")
+	cfg, err := chains.GetConfig(".", "fullConfig")
 	if err != nil {
 		panic(err)
 	}
+	log.Info().Msgf("%v", cfg.Chains)
 
-	ethClient, err := evmClient.NewEVMClient(evmCfg, AliceKp)
-	if err != nil {
-		panic(err)
+	relayedChains := make([]relayer.RelayedChain, len(cfg.Chains))
+	for index, chainConfig := range cfg.Chains {
+
+		// Both of these if block for etheruem and substrate should be moved to an InitializeChain method like
+		// in the main.go of the ChainBridge repo
+		if chainConfig.Type == "ethereum" {
+			ethClient, err := evmClient.NewEVMClient(&chainConfig, AliceKp)
+			if err != nil {
+				panic(err)
+			}
+			evmConfig := ethClient.GetConfig()
+
+			evmListener := listener.NewEVMListener(ethClient)
+			evmListener.RegisterHandlerFabric(evmConfig.Erc20Handler, ethClient.ReturnErc20HandlerFabric)
+
+			evmWriter := writer.NewWriter(ethClient)
+			evmWriter.RegisterProposalHandler(evmConfig.Erc20Handler, writer.ERC20ProposalHandler)
+
+			evmChain := evm.NewEVMChain(evmListener, evmWriter, db, evmConfig.Bridge, evmConfig.GeneralChainConfig.Id)
+			if err != nil {
+				panic(err)
+			}
+			relayedChains[index] = evmChain
+		} else if chainConfig.Type == "substrate" {
+
+			kp, err := keystore.KeypairFromAddress(chainConfig.From, keystore.SubChain, "alice", true)
+			if err != nil {
+				panic(err)
+			}
+			krp := kp.(*sr25519.Keypair).AsKeyringPair()
+
+			subC, err := subClient.NewSubstrateClient(chainConfig.Endpoint, krp, stopChn)
+			if err != nil {
+				panic(err)
+			}
+			subL := subListener.NewSubstrateListener(subC)
+			subW := subWriter.NewSubstrateWriter(1, subC)
+
+			// TODO: really not need this dynamic handler assignment
+			subL.RegisterSubscription(relayer.FungibleTransfer, subListener.FungibleTransferHandler)
+			subL.RegisterSubscription(relayer.GenericTransfer, subListener.GenericTransferHandler)
+			subL.RegisterSubscription(relayer.NonFungibleTransfer, subListener.NonFungibleTransferHandler)
+
+			subW.RegisterHandler(relayer.FungibleTransfer, subWriter.CreateFungibleProposal)
+			subChain := substrate.NewSubstrateChain(subL, subW, db, chainConfig.Id)
+			relayedChains[index] = subChain
+		} else {
+			return errors.New("unrecognized Chain Type")
+		}
+
 	}
-	evmListener := listener.NewEVMListener(ethClient)
-	evmListener.RegisterHandlerFabric(evmCfg.Erc20Handler, ethClient.ReturnErc20HandlerFabric)
 
-	evmWriter := writer.NewWriter(ethClient)
-	evmWriter.RegisterProposalHandler(evmCfg.Erc20Handler, writer.ERC20ProposalHandler)
-
-	evmChain := evm.NewEVMChain(evmListener, evmWriter, db, evmCfg.Bridge, evmCfg.ChainConfig.ChainId)
-	if err != nil {
-		panic(err)
-	}
-
-	subCfg, err := substrate.GetConfig(".", "subConfig")
-	if err != nil {
-		panic(err)
-	}
-
-	kp, err := keystore.KeypairFromAddress(subCfg.From, keystore.SubChain, "alice", true)
-	if err != nil {
-		panic(err)
-	}
-	krp := kp.(*sr25519.Keypair).AsKeyringPair()
-
-	subC, err := subClient.NewSubstrateClient(subCfg.ChainConfig.Endpoint, krp, stopChn)
-	if err != nil {
-		panic(err)
-	}
-	subL := subListener.NewSubstrateListener(subC)
-	subW := subWriter.NewSubstrateWriter(1, subC)
-
-	// TODO: really not need this dynamic handler assignment
-	subL.RegisterSubscription(relayer.FungibleTransfer, subListener.FungibleTransferHandler)
-	subL.RegisterSubscription(relayer.GenericTransfer, subListener.GenericTransferHandler)
-	subL.RegisterSubscription(relayer.NonFungibleTransfer, subListener.NonFungibleTransferHandler)
-
-	subW.RegisterHandler(relayer.FungibleTransfer, subWriter.CreateFungibleProposal)
-	subChain := substrate.NewSubstrateChain(subL, subW, db, subCfg.ChainConfig.ChainId)
-
-	r := relayer.NewRelayer([]relayer.RelayedChain{evmChain, subChain})
+	r := relayer.NewRelayer(relayedChains)
 
 	go r.Start(stopChn, errChn)
 

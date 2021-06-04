@@ -33,6 +33,7 @@ keys/
 config.toml
 config.json
 subConfig.json
+fullConfig.json
 *.block
 gethdata1/
 gethdata2/
