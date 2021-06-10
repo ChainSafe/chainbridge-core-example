@@ -66,37 +66,6 @@ func Run() error {
 		panic(err)
 	}
 
-	// relayedChains := make([]relayer.RelayedChain, len(cfg.Chains))
-	// for index, chainConfig := range cfg.Chains {
-
-	// 	if chainConfig.Type == "ethereum" {
-	// 		evmChain, err := evmClient.InitializeEthChain(&chainConfig, db, AliceKp)
-	// 		if err != nil {
-	// 			panic(err)
-	// 		}
-	// 		relayedChains[index] = evmChain
-	// 	} else if chainConfig.Type == "substrate" {
-	// 		subChain, err := subClient.InitializeSubChain(&chainConfig, db, stopChn)
-	// 		if err != nil {
-	// 			panic(err)
-	// 		}
-	// 		relayedChains[index] = subChain
-	// 	} else {
-	// 		return errors.New("unrecognized Chain Type")
-	// 	}
-
-	// }
-
-	// r := relayer.NewRelayer(relayedChains)
-
-	// config.InitializeRelayer(
-	// 	cfg,
-	// 	ethClient,
-	// 	substrateClient,
-	// 	AliceKp,
-	// 	kvdb,
-	// 	stopChn)
-
 	go r.Start(stopChn, errChn)
 
 	sysErr := make(chan os.Signal, 1)
