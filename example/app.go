@@ -61,8 +61,7 @@ func Run() error {
 	if err != nil {
 		panic(err)
 	}
-	ethClient := evmClient.NewEVMClient()
-	err = ethClient.InitializeClient(ethCfg, AliceKp)
+	ethClient, err := evmClient.NewEVMClient(ethCfg, AliceKp)
 	if err != nil {
 		panic(err)
 	}
@@ -86,8 +85,7 @@ func Run() error {
 	}
 	krp := kp.(*sr25519.Keypair).AsKeyringPair()
 
-	subC := subClient.NewSubstrateClient()
-	err = subC.InitializeClient(subCfg.GeneralChainConfig.Endpoint, krp, stopChn)
+	subC, err := subClient.NewSubstrateClient(subCfg.GeneralChainConfig.Endpoint, krp, stopChn)
 	if err != nil {
 		panic(err)
 	}
