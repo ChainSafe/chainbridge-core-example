@@ -8,7 +8,6 @@ import (
 	evmClient "github.com/ChainSafe/chainbridge-eth-module"
 	subClient "github.com/ChainSafe/chainbridge-substrate-module"
 
-	evmClientConfig "github.com/ChainSafe/chainbridge-eth-module/config"
 	subClientConfig "github.com/ChainSafe/chainbridge-substrate-module/config"
 
 	"github.com/ChainSafe/chainbridge-core-example/example/keystore"
@@ -57,21 +56,23 @@ func Run() error {
 		panic(err)
 	}
 
-	ethCfg, err := evmClientConfig.GetConfig(".", "config")
-	if err != nil {
-		panic(err)
-	}
-	ethClient, err := evmClient.NewEVMClient(ethCfg, AliceKp)
+	// ethCfg, err := evmClientConfig.GetConfig(".", "config")
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// fmt.Print(ethCfg)
+	ethClient := evmClient.NewEVMClient(AliceKp)
+	err = ethClient.Configurate(".", "config")
 	if err != nil {
 		panic(err)
 	}
 	evmListener := listener.NewEVMListener(ethClient)
-	evmListener.RegisterHandlerFabric(ethCfg.Erc20Handler, ethClient.ReturnErc20HandlerFabric)
+	evmListener.RegisterHandlerFabric(ethClient.GetConfig().SharedEVMConfig.Erc20Handler, ethClient.ReturnErc20HandlerFabric)
 
 	evmWriter := writer.NewWriter(ethClient)
-	evmWriter.RegisterProposalHandler(ethCfg.Erc20Handler, writer.ERC20ProposalHandler)
+	evmWriter.RegisterProposalHandler(ethClient.GetConfig().SharedEVMConfig.Erc20Handler, writer.ERC20ProposalHandler)
 
-	evmChain := evm.NewEVMChain(evmListener, evmWriter, db, ethCfg.Bridge, 0)
+	evmChain := evm.NewEVMChain(evmListener, evmWriter, db, ethClient.GetConfig().SharedEVMConfig.Bridge, 0)
 	if err != nil {
 		panic(err)
 	}
