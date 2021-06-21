@@ -83,12 +83,12 @@ func Run() error {
 		panic(err)
 	}
 
-	// TODO: change this to be used in the same way as eth module with configurate
+	// TODO: this can be removed once grabbing the keypair is done inside the module
+	// This most likely can only be done by moving the keystore package into core to be used by the module
 	subCfg, err := subClientConfig.GetConfig(".", "subConfig")
 	if err != nil {
 		panic(err)
 	}
-	parsedSubCfg := subClientConfig.ParseConfig(subCfg)
 
 	kp, err := keystore.KeypairFromAddress(subCfg.GeneralChainConfig.From, keystore.SubChain, "alice", true)
 	if err != nil {
@@ -96,10 +96,13 @@ func Run() error {
 	}
 	krp := kp.(*sr25519.Keypair).AsKeyringPair()
 
-	subC, err := subClient.NewSubstrateClient(subCfg.GeneralChainConfig.Endpoint, krp, stopChn)
+	subC := subClient.NewSubstrateClient(krp, stopChn)
+	err = subC.Configurate(".", "subConfig")
 	if err != nil {
 		panic(err)
 	}
+	subConfig := subC.GetConfig()
+
 	subL := subListener.NewSubstrateListener(subC)
 	subW := subWriter.NewSubstrateWriter(1, subC)
 
@@ -115,8 +118,8 @@ func Run() error {
 		subL,
 		subW,
 		db,
-		*parsedSubCfg.SharedSubstrateConfig.GeneralChainConfig.Id,
-		&parsedSubCfg.SharedSubstrateConfig)
+		*subConfig.SharedSubstrateConfig.GeneralChainConfig.Id,
+		&subConfig.SharedSubstrateConfig)
 
 	r := relayer.NewRelayer([]relayer.RelayedChain{evmChain, subChain})
 
