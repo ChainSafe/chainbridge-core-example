@@ -7,6 +7,7 @@ import (
 
 	evmClient "github.com/ChainSafe/chainbridge-eth-module"
 	subClient "github.com/ChainSafe/chainbridge-substrate-module"
+	"github.com/spf13/viper"
 
 	subClientConfig "github.com/ChainSafe/chainbridge-substrate-module/config"
 
@@ -14,6 +15,7 @@ import (
 	"github.com/ChainSafe/chainbridge-core/chains/evm"
 	"github.com/ChainSafe/chainbridge-core/chains/evm/listener"
 	"github.com/ChainSafe/chainbridge-core/chains/evm/writer"
+	"github.com/ChainSafe/chainbridge-core/config"
 	"github.com/ChainSafe/chainbridge-core/crypto/sr25519"
 
 	"github.com/ChainSafe/chainbridge-core/chains/substrate"
@@ -51,35 +53,43 @@ func Run() error {
 	errChn := make(chan error)
 	stopChn := make(chan struct{})
 
-	db, err := lvldb.NewLvlDB("./lvldbdata")
+	db, err := lvldb.NewLvlDB(viper.GetString(config.BlockstoreFlagName))
 	if err != nil {
 		panic(err)
 	}
 
-	// ethCfg, err := evmClientConfig.GetConfig(".", "config")
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// fmt.Print(ethCfg)
 	ethClient := evmClient.NewEVMClient(AliceKp)
 	err = ethClient.Configurate(".", "config")
 	if err != nil {
 		panic(err)
 	}
+	ethConfig := ethClient.GetConfig()
+
 	evmListener := listener.NewEVMListener(ethClient)
 	evmListener.RegisterHandlerFabric(ethClient.GetConfig().SharedEVMConfig.Erc20Handler, ethClient.ReturnErc20HandlerFabric)
 
 	evmWriter := writer.NewWriter(ethClient)
 	evmWriter.RegisterProposalHandler(ethClient.GetConfig().SharedEVMConfig.Erc20Handler, writer.ERC20ProposalHandler)
 
-	evmChain := evm.NewEVMChain(evmListener, evmWriter, db, ethClient.GetConfig().SharedEVMConfig.Bridge, 0)
+	// TODO: get rid of bridge and id params
+	evmChain := evm.NewEVMChain(
+		evmListener,
+		evmWriter,
+		db,
+		ethConfig.SharedEVMConfig.Bridge,
+		*ethConfig.SharedEVMConfig.GeneralChainConfig.Id,
+		&ethConfig.SharedEVMConfig)
 	if err != nil {
 		panic(err)
 	}
+
+	// TODO: change this to be used in the same way as eth module with configurate
 	subCfg, err := subClientConfig.GetConfig(".", "subConfig")
 	if err != nil {
 		panic(err)
 	}
+	parsedSubCfg := subClientConfig.ParseConfig(subCfg)
+
 	kp, err := keystore.KeypairFromAddress(subCfg.GeneralChainConfig.From, keystore.SubChain, "alice", true)
 	if err != nil {
 		panic(err)
@@ -99,7 +109,14 @@ func Run() error {
 	subL.RegisterSubscription(relayer.NonFungibleTransfer, subListener.NonFungibleTransferHandler)
 
 	subW.RegisterHandler(relayer.FungibleTransfer, subWriter.CreateFungibleProposal)
-	subChain := substrate.NewSubstrateChain(subL, subW, db, 1)
+
+	// TODO: get rid of id param
+	subChain := substrate.NewSubstrateChain(
+		subL,
+		subW,
+		db,
+		*parsedSubCfg.SharedSubstrateConfig.GeneralChainConfig.Id,
+		&parsedSubCfg.SharedSubstrateConfig)
 
 	r := relayer.NewRelayer([]relayer.RelayedChain{evmChain, subChain})
 

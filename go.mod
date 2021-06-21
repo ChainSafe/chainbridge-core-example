@@ -18,5 +18,6 @@ require (
 	github.com/mattn/go-colorable v0.1.2 // indirect
 	github.com/rs/zerolog v1.22.0
 	github.com/spf13/cobra v1.1.1
+	github.com/spf13/viper v1.7.1
 	golang.org/x/crypto v0.0.0-20210513164829-c07d793c2f9a
 )
