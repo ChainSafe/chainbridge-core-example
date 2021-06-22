@@ -51,7 +51,6 @@ func Run() error {
 	if err != nil {
 		panic(err)
 	}
-
 	ethClient, err := evmclient.NewEVMClient(TestEndpoint, AliceKp)
 	if err != nil {
 		panic(err)
