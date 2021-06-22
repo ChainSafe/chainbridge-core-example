@@ -21,7 +21,7 @@ var (
 )
 
 func init() {
-	//root.AddCommand(evmClient.CLI()) // Example of how CLI should be registered
+	//rootCMD.AddCommand(evmClient.CLI()) // Example of how CLI should be registered
 }
 
 func Execute() {

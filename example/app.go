@@ -5,19 +5,18 @@ import (
 	"os/signal"
 	"syscall"
 
-	evmClient "github.com/ChainSafe/chainbridge-eth-module"
-	subClient "github.com/ChainSafe/chainbridge-substrate-module"
-
 	"github.com/ChainSafe/chainbridge-core-example/example/keystore"
 	"github.com/ChainSafe/chainbridge-core/chains/evm"
+	"github.com/ChainSafe/chainbridge-core/chains/evm/evmclient"
 	"github.com/ChainSafe/chainbridge-core/chains/evm/listener"
-	"github.com/ChainSafe/chainbridge-core/chains/evm/writer"
+	"github.com/ChainSafe/chainbridge-core/chains/evm/voter"
 	"github.com/ChainSafe/chainbridge-core/chains/substrate"
 	subListener "github.com/ChainSafe/chainbridge-core/chains/substrate/listener"
 	subWriter "github.com/ChainSafe/chainbridge-core/chains/substrate/writer"
 	"github.com/ChainSafe/chainbridge-core/crypto/sr25519"
 	"github.com/ChainSafe/chainbridge-core/lvldb"
 	"github.com/ChainSafe/chainbridge-core/relayer"
+	subModule "github.com/ChainSafe/chainbridge-substrate-module"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/rs/zerolog/log"
 )
@@ -40,7 +39,7 @@ const DefaultGasLimit = 6721975
 const DefaultGasPrice = 20000000000
 
 const TestEndpoint = "ws://localhost:8545"
-const TestEndpoint2 = "ws://localhost:8546"
+const TestEndpointCelo = "ws://localhost:8546"
 
 //Bridge:             0x62877dDCd49aD22f5eDfc6ac108e9a4b5D2bD88B
 //Erc20 Handler:      0x3167776db165D8eA0f51790CA2bbf44Db5105ADF
@@ -53,31 +52,32 @@ func Run() error {
 		panic(err)
 	}
 
-	ethClient, err := evmClient.NewEVMClient(TestEndpoint, false, AliceKp)
-	if err != nil {
-		panic(err)
-	}
-	evmListener := listener.NewEVMListener(ethClient)
-	evmListener.RegisterHandler("0x3167776db165D8eA0f51790CA2bbf44Db5105ADF", evmClient.HandleErc20DepositedEvent)
-
-	evmWriter := writer.NewWriter(ethClient)
-	evmWriter.RegisterProposalHandler("0x3167776db165D8eA0f51790CA2bbf44Db5105ADF", writer.ERC20ProposalHandler)
-
-	evmChain := evm.NewEVMChain(evmListener, evmWriter, db, "0x62877dDCd49aD22f5eDfc6ac108e9a4b5D2bD88B", 0)
+	ethClient, err := evmclient.NewEVMClient(TestEndpoint, AliceKp)
 	if err != nil {
 		panic(err)
 	}
 
+	ethClient.Configurate()
+
+	eventHandler := listener.NewETHEventHandler(common.HexToAddress("0x62877dDCd49aD22f5eDfc6ac108e9a4b5D2bD88B"), ethClient)
+	eventHandler.RegisterEventHandler("0x3167776db165D8eA0f51790CA2bbf44Db5105ADF", listener.Erc20EventHandler)
+	evmListener := listener.NewEVMListener(ethClient, eventHandler, common.HexToAddress("0x62877dDCd49aD22f5eDfc6ac108e9a4b5D2bD88B"))
+	mh := voter.NewEVMMessageHandler(ethClient, common.HexToAddress("0x62877dDCd49aD22f5eDfc6ac108e9a4b5D2bD88B"))
+	mh.RegisterMessageHandler(common.HexToAddress("0x3167776db165D8eA0f51790CA2bbf44Db5105ADF"), voter.ERC20MessageHandler)
+	evmVoter := voter.NewVoter(mh, ethClient)
+	evmChain := evm.NewEVMChain(evmListener, evmVoter, db, 0)
+
+	// Substrate setup
 	kp, err := keystore.KeypairFromAddress("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY", keystore.SubChain, "alice", true)
 	if err != nil {
 		panic(err)
 	}
 	krp := kp.(*sr25519.Keypair).AsKeyringPair()
-
-	subC, err := subClient.NewSubstrateClient("ws://localhost:9944", krp, stopChn)
+	subC, err := subModule.NewSubstrateClient("ws://localhost:9944", krp, stopChn)
 	if err != nil {
 		panic(err)
 	}
+
 	subL := subListener.NewSubstrateListener(subC)
 	subW := subWriter.NewSubstrateWriter(1, subC)
 
@@ -89,7 +89,7 @@ func Run() error {
 	subW.RegisterHandler(relayer.FungibleTransfer, subWriter.CreateFungibleProposal)
 	subChain := substrate.NewSubstrateChain(subL, subW, db, 1)
 
-	r := relayer.NewRelayer([]relayer.RelayedChain{evmChain, subChain})
+	r := relayer.NewRelayer([]relayer.RelayedChain{subChain, evmChain})
 
 	go r.Start(stopChn, errChn)
 

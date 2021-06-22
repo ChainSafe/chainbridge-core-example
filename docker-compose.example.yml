@@ -8,13 +8,13 @@ services:
     container_name: geth
     ports:
       - "8545:8545"
-
+#
 #  celo:
-#    image: "chainsafe/chainbridge-celo-blockchain:20200720215414-7a61816"
+#    image: "chainsafe/chainbridge-celo-blockchain"
 #    container_name: celo
 #    ports:
 #      - "8546:8545"
-
+#
 
   sub-chain:
     image: "chainsafe/chainbridge-substrate-chain:v1.3.0"
