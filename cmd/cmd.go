@@ -32,10 +32,10 @@ func init() {
 	rootCMD.Flags().String(config.BlockstoreFlagName, "./lvldbdata", "Specify path for blockstore")
 	viper.BindPFlag(config.BlockstoreFlagName, rootCMD.Flags().Lookup(config.BlockstoreFlagName))
 
-	rootCMD.Flags().Bool(config.FreshStartFlagName, false, "Disables loading from blockstore at start. Opts will still be used if specified.")
+	rootCMD.Flags().Bool(config.FreshStartFlagName, false, "Disables loading from blockstore at start. Opts will still be used if specified. (default: false)")
 	viper.BindPFlag(config.FreshStartFlagName, rootCMD.Flags().Lookup(config.FreshStartFlagName))
 
-	rootCMD.Flags().Bool(config.LatestBlockFlagName, false, "Overrides blockstore and start block, starts from latest block")
+	rootCMD.Flags().Bool(config.LatestBlockFlagName, false, "Overrides blockstore and start block, starts from latest block (default: false)")
 	viper.BindPFlag(config.LatestBlockFlagName, rootCMD.Flags().Lookup(config.LatestBlockFlagName))
 
 	rootCMD.Flags().String(config.TestKeyFlagName, "", "Applies a predetermined test keystore to the chains.")
