@@ -35,8 +35,8 @@ func init() {
 	rootCMD.Flags().Bool(config.FreshStartFlagName, false, "Disables loading from blockstore at start. Opts will still be used if specified.")
 	viper.BindPFlag(config.FreshStartFlagName, rootCMD.Flags().Lookup(config.FreshStartFlagName))
 
-	rootCMD.Flags().Bool(config.LatestBlockFlagName, false, "Overrides blockstore and start block, starts from latest block")
-	viper.BindPFlag(config.LatestBlockFlagName, rootCMD.Flags().Lookup(config.LatestBlockFlagName))
+	rootCMD.Flags().String(config.TestKeyFlagName, "", "Applies a predetermined test keystore to the chains.")
+	viper.BindPFlag(config.TestKeyFlagName, rootCMD.Flags().Lookup(config.TestKeyFlagName))
 
 }
 
