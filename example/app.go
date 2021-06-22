@@ -34,7 +34,7 @@ func Run() error {
 	}
 
 	ethClient := evmClient.NewEVMClient()
-	err = ethClient.Configurate(".", "config")
+	err = ethClient.Configurate(viper.GetString(config.ConfigFlagName), "config")
 	if err != nil {
 		panic(err)
 	}
@@ -59,7 +59,7 @@ func Run() error {
 	}
 
 	subC := subClient.NewSubstrateClient(stopChn)
-	err = subC.Configurate(".", "subConfig")
+	err = subC.Configurate(viper.GetString(config.ConfigFlagName), "subConfig")
 	if err != nil {
 		panic(err)
 	}

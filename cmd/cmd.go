@@ -26,8 +26,8 @@ func init() {
 	//root.AddCommand(evmClient.CLI()) // Example of how CLI should be registered
 
 	// TODO: possibly see if these can be bound in core
-	rootCMD.Flags().String(config.KeystoreFlagName, "./keys", "Path to keystore directory")
-	viper.BindPFlag(config.KeystoreFlagName, rootCMD.Flags().Lookup(config.KeystoreFlagName))
+	rootCMD.Flags().String(config.ConfigFlagName, ".", "Path to JSON configuration files directory")
+	viper.BindPFlag(config.ConfigFlagName, rootCMD.Flags().Lookup(config.ConfigFlagName))
 
 	rootCMD.Flags().String(config.BlockstoreFlagName, "./lvldbdata", "Specify path for blockstore")
 	viper.BindPFlag(config.BlockstoreFlagName, rootCMD.Flags().Lookup(config.BlockstoreFlagName))
