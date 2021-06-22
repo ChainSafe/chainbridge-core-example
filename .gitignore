@@ -41,3 +41,4 @@ centrifuge-chain/
 /solidity
 /cfgBuilder/*.toml
 /lvldbdata
+/client_configs
