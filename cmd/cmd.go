@@ -5,7 +5,6 @@ import (
 	"github.com/ChainSafe/chainbridge-core/config"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var (
@@ -24,25 +23,7 @@ var (
 
 func init() {
 	//rootCMD.AddCommand(evmClient.CLI()) // Example of how CLI should be registered
-
-	// TODO: possibly see if these can be bound in core
-	rootCMD.Flags().String(config.ConfigFlagName, ".", "Path to JSON configuration files directory")
-	viper.BindPFlag(config.ConfigFlagName, rootCMD.Flags().Lookup(config.ConfigFlagName))
-
-	rootCMD.Flags().String(config.BlockstoreFlagName, "./lvldbdata", "Specify path for blockstore")
-	viper.BindPFlag(config.BlockstoreFlagName, rootCMD.Flags().Lookup(config.BlockstoreFlagName))
-
-	rootCMD.Flags().Bool(config.FreshStartFlagName, false, "Disables loading from blockstore at start. Opts will still be used if specified. (default: false)")
-	viper.BindPFlag(config.FreshStartFlagName, rootCMD.Flags().Lookup(config.FreshStartFlagName))
-
-	rootCMD.Flags().Bool(config.LatestBlockFlagName, false, "Overrides blockstore and start block, starts from latest block (default: false)")
-	viper.BindPFlag(config.LatestBlockFlagName, rootCMD.Flags().Lookup(config.LatestBlockFlagName))
-
-	rootCMD.Flags().String(config.KeystoreFlagName, "./keys", "Path to keystore directory")
-	viper.BindPFlag(config.KeystoreFlagName, rootCMD.Flags().Lookup(config.KeystoreFlagName))
-
-	rootCMD.Flags().String(config.TestKeyFlagName, "", "Applies a predetermined test keystore to the chains.")
-	viper.BindPFlag(config.TestKeyFlagName, rootCMD.Flags().Lookup(config.TestKeyFlagName))
+	config.BindFlags(rootCMD)
 }
 
 func Execute() {
