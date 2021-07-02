@@ -15,12 +15,13 @@ import (
 	"github.com/ChainSafe/chainbridge-core/chains/substrate"
 	subListener "github.com/ChainSafe/chainbridge-core/chains/substrate/listener"
 	subWriter "github.com/ChainSafe/chainbridge-core/chains/substrate/writer"
-	"github.com/ChainSafe/chainbridge-core/crypto/sr25519"
+	"github.com/ChainSafe/chainbridge-core/config"
 	"github.com/ChainSafe/chainbridge-core/lvldb"
 	"github.com/ChainSafe/chainbridge-core/relayer"
 	subModule "github.com/ChainSafe/chainbridge-substrate-module"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/rs/zerolog/log"
+	"github.com/spf13/viper"
 )
 
 var AliceKp = keystore.TestKeyRing.EthereumKeys[keystore.AliceKey]
@@ -49,36 +50,31 @@ func Run() error {
 	errChn := make(chan error)
 	stopChn := make(chan struct{})
 
-	db, err := lvldb.NewLvlDB("./lvldbdata")
+	db, err := lvldb.NewLvlDB(viper.GetString(config.BlockstoreFlagName))
 	if err != nil {
 		panic(err)
 	}
-
-	ethClient, err := evmclient.NewEVMClient(TestEndpoint, AliceKp)
+	ethClient := evmclient.NewEVMClient()
+	err = ethClient.Configurate(viper.GetString(config.ConfigFlagName), "config")
 	if err != nil {
 		panic(err)
 	}
+	ethCfg := ethClient.GetConfig()
 
-	ethClient.Configurate()
-
-	eventHandler := listener.NewETHEventHandler(common.HexToAddress("0x62877dDCd49aD22f5eDfc6ac108e9a4b5D2bD88B"), ethClient)
-	eventHandler.RegisterEventHandler("0x3167776db165D8eA0f51790CA2bbf44Db5105ADF", listener.Erc20EventHandler)
-	evmListener := listener.NewEVMListener(ethClient, eventHandler, common.HexToAddress("0x62877dDCd49aD22f5eDfc6ac108e9a4b5D2bD88B"))
-	mh := voter.NewEVMMessageHandler(ethClient, common.HexToAddress("0x62877dDCd49aD22f5eDfc6ac108e9a4b5D2bD88B"))
-	mh.RegisterMessageHandler(common.HexToAddress("0x3167776db165D8eA0f51790CA2bbf44Db5105ADF"), voter.ERC20MessageHandler)
+	eventHandler := listener.NewETHEventHandler(common.HexToAddress(ethCfg.SharedEVMConfig.Bridge), ethClient)
+	eventHandler.RegisterEventHandler(ethCfg.SharedEVMConfig.Erc20Handler, listener.Erc20EventHandler)
+	evmListener := listener.NewEVMListener(ethClient, eventHandler, common.HexToAddress(ethCfg.SharedEVMConfig.Bridge))
+	mh := voter.NewEVMMessageHandler(ethClient, common.HexToAddress(ethCfg.SharedEVMConfig.Bridge))
+	mh.RegisterMessageHandler(common.HexToAddress(ethCfg.SharedEVMConfig.Erc20Handler), voter.ERC20MessageHandler)
 	evmVoter := voter.NewVoter(mh, ethClient)
-	evmChain := evm.NewEVMChain(evmListener, evmVoter, db, 0)
+	evmChain := evm.NewEVMChain(evmListener, evmVoter, db, *ethCfg.SharedEVMConfig.GeneralChainConfig.Id, &ethCfg.SharedEVMConfig)
 
-	// Substrate setup
-	kp, err := keystore.KeypairFromAddress("5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY", keystore.SubChain, "alice", true)
+	subC := subModule.NewSubstrateClient(stopChn)
+	err = subC.Configurate(viper.GetString(config.ConfigFlagName), "subConfig")
 	if err != nil {
 		panic(err)
 	}
-	krp := kp.(*sr25519.Keypair).AsKeyringPair()
-	subC, err := subModule.NewSubstrateClient("ws://localhost:9944", krp, stopChn)
-	if err != nil {
-		panic(err)
-	}
+	subCfg := subC.GetConfig()
 
 	subL := subListener.NewSubstrateListener(subC)
 	subW := subWriter.NewSubstrateWriter(1, subC)
@@ -89,7 +85,7 @@ func Run() error {
 	subL.RegisterSubscription(relayer.NonFungibleTransfer, subListener.NonFungibleTransferHandler)
 
 	subW.RegisterHandler(relayer.FungibleTransfer, subWriter.CreateFungibleProposal)
-	subChain := substrate.NewSubstrateChain(subL, subW, db, 1)
+	subChain := substrate.NewSubstrateChain(subL, subW, db, *subCfg.SharedSubstrateConfig.GeneralChainConfig.Id, &subCfg.SharedSubstrateConfig)
 
 	// Celo setup
 	ethClientCelo, err := evmclient.NewEVMClient(TestEndpointCelo, AliceKp)
