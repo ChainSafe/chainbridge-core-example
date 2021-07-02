@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"github.com/ChainSafe/chainbridge-core-example/example"
+	"github.com/ChainSafe/chainbridge-core/config"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
@@ -22,6 +23,7 @@ var (
 
 func init() {
 	//rootCMD.AddCommand(evmClient.CLI()) // Example of how CLI should be registered
+	config.BindFlags(rootCMD)
 }
 
 func Execute() {
