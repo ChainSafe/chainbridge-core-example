@@ -41,3 +41,4 @@ centrifuge-chain/
 /cfgBuilder/*.toml
 /lvldbdata
 /client_configs
+chainbridge-core-example
