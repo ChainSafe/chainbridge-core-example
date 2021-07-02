@@ -5,11 +5,13 @@ import (
 	"os/signal"
 	"syscall"
 
+	celoVoter "github.com/ChainSafe/chainbridge-celo-module/voter"
 	"github.com/ChainSafe/chainbridge-core-example/example/keystore"
 	"github.com/ChainSafe/chainbridge-core/chains/evm"
 	"github.com/ChainSafe/chainbridge-core/chains/evm/evmclient"
 	"github.com/ChainSafe/chainbridge-core/chains/evm/listener"
 	"github.com/ChainSafe/chainbridge-core/chains/evm/voter"
+
 	"github.com/ChainSafe/chainbridge-core/chains/substrate"
 	subListener "github.com/ChainSafe/chainbridge-core/chains/substrate/listener"
 	subWriter "github.com/ChainSafe/chainbridge-core/chains/substrate/writer"
@@ -89,7 +91,21 @@ func Run() error {
 	subW.RegisterHandler(relayer.FungibleTransfer, subWriter.CreateFungibleProposal)
 	subChain := substrate.NewSubstrateChain(subL, subW, db, 1)
 
-	r := relayer.NewRelayer([]relayer.RelayedChain{subChain, evmChain})
+	// Celo setup
+	ethClientCelo, err := evmclient.NewEVMClient(TestEndpointCelo, AliceKp)
+	if err != nil {
+		panic(err)
+	}
+	ethClientCelo.Configurate()
+	eventHandlerCelo := listener.NewETHEventHandler(common.HexToAddress("0x62877dDCd49aD22f5eDfc6ac108e9a4b5D2bD88B"), ethClientCelo)
+	eventHandlerCelo.RegisterEventHandler("0x3167776db165D8eA0f51790CA2bbf44Db5105ADF", listener.Erc20EventHandler)
+	evmListenerCelo := listener.NewEVMListener(ethClientCelo, eventHandlerCelo, common.HexToAddress("0x62877dDCd49aD22f5eDfc6ac108e9a4b5D2bD88B"))
+	mhCelo := voter.NewEVMMessageHandler(ethClientCelo, common.HexToAddress("0x62877dDCd49aD22f5eDfc6ac108e9a4b5D2bD88B"))
+	mhCelo.RegisterMessageHandler(common.HexToAddress("0x3167776db165D8eA0f51790CA2bbf44Db5105ADF"), celoVoter.ERC20CeloMessageHandler)
+	evmVoterCelo := voter.NewVoter(mhCelo, ethClientCelo)
+	celoChain := evm.NewEVMChain(evmListenerCelo, evmVoterCelo, db, 2)
+
+	r := relayer.NewRelayer([]relayer.RelayedChain{subChain, evmChain, celoChain})
 
 	go r.Start(stopChn, errChn)
 
