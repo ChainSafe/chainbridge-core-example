@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     # requires these jobs to run first
     # if check not passed, job will be skipped
-    if: github.ref == 'refs/heads/main' || contains(github.ref, '/tags/v')
+    if: github.ref == 'refs/heads/main' || contains(github.ref, '/tags/v') || github.ref == 'refs/heads/kovan-gorli-dev'
     # list steps
     steps:
       - name: Checkout
