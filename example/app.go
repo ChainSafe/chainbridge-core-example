@@ -36,12 +36,6 @@ var (
 	}
 )
 
-const DefaultGasLimit = 6721975
-const DefaultGasPrice = 20000000000
-
-const TestEndpoint = "ws://localhost:8545"
-const TestEndpointCelo = "ws://localhost:8546"
-
 //Bridge:             0x62877dDCd49aD22f5eDfc6ac108e9a4b5D2bD88B
 //Erc20 Handler:      0x3167776db165D8eA0f51790CA2bbf44Db5105ADF
 func Run() error {
@@ -52,8 +46,10 @@ func Run() error {
 	if err != nil {
 		panic(err)
 	}
+
+	// rinkeby
 	ethClient := evmclient.NewEVMClient()
-	err = ethClient.Configurate(viper.GetString(config.ConfigFlagName), "config")
+	err = ethClient.Configurate(viper.GetString(config.ConfigFlagName), "config_rinkeby")
 	if err != nil {
 		panic(err)
 	}
@@ -66,23 +62,26 @@ func Run() error {
 	mh.RegisterMessageHandler(common.HexToAddress(ethCfg.SharedEVMConfig.Erc20Handler), voter.ERC20MessageHandler)
 	evmVoter := voter.NewVoter(mh, ethClient)
 	evmChain := evm.NewEVMChain(evmListener, evmVoter, db, *ethCfg.SharedEVMConfig.GeneralChainConfig.Id, &ethCfg.SharedEVMConfig)
-	//
-	//// Celo setup
-	//ethClientCelo := evmclient.NewEVMClient()
-	//if err != nil {
-	//	panic(err)
-	//}
-	//celoCfg := ethClient.GetConfig()
-	//ethClientCelo.Configurate(viper.GetString(config.ConfigFlagName), "config_celo")
-	//eventHandlerCelo := listener.NewETHEventHandler(common.HexToAddress("0x62877dDCd49aD22f5eDfc6ac108e9a4b5D2bD88B"), ethClientCelo)
-	//eventHandlerCelo.RegisterEventHandler("0x3167776db165D8eA0f51790CA2bbf44Db5105ADF", listener.Erc20EventHandler)
-	//evmListenerCelo := listener.NewEVMListener(ethClientCelo, eventHandlerCelo, common.HexToAddress("0x62877dDCd49aD22f5eDfc6ac108e9a4b5D2bD88B"))
-	//mhCelo := voter.NewEVMMessageHandler(ethClientCelo, common.HexToAddress("0x62877dDCd49aD22f5eDfc6ac108e9a4b5D2bD88B"))
-	//mhCelo.RegisterMessageHandler(common.HexToAddress("0x3167776db165D8eA0f51790CA2bbf44Db5105ADF"), celoVoter.ERC20CeloMessageHandler)
-	//evmVoterCelo := voter.NewVoter(mhCelo, ethClientCelo)
-	//celoChain := evm.NewEVMChain(evmListenerCelo, evmVoterCelo, db, 2, &celoCfg.SharedEVMConfig)
-	//
-	r := relayer.NewRelayer([]relayer.RelayedChain{evmChain})
+
+	// goerli setup
+	goerliClient := evmclient.NewEVMClient()
+	if err != nil {
+		panic(err)
+	}
+	goerliCfg := ethClient.GetConfig()
+	err = goerliClient.Configurate(viper.GetString(config.ConfigFlagName), "config_goerli")
+	if err != nil {
+		panic(err)
+	}
+	eventHandlerGoerli := listener.NewETHEventHandler(common.HexToAddress(goerliCfg.SharedEVMConfig.Bridge), goerliClient)
+	eventHandlerGoerli.RegisterEventHandler(goerliCfg.SharedEVMConfig.Erc20Handler, listener.Erc20EventHandler)
+	goerliListener := listener.NewEVMListener(goerliClient, eventHandlerGoerli, common.HexToAddress(goerliCfg.SharedEVMConfig.Bridge))
+	mhGoerli := voter.NewEVMMessageHandler(goerliClient, common.HexToAddress(goerliCfg.SharedEVMConfig.Bridge))
+	mhGoerli.RegisterMessageHandler(common.HexToAddress(goerliCfg.SharedEVMConfig.Erc20Handler), voter.ERC20MessageHandler)
+	goerliVoter := voter.NewVoter(mhGoerli, goerliClient)
+	goerliChain := evm.NewEVMChain(goerliListener, goerliVoter, db, 2, &goerliCfg.SharedEVMConfig)
+
+	r := relayer.NewRelayer([]relayer.RelayedChain{evmChain, goerliChain})
 
 	go r.Start(stopChn, errChn)
 
