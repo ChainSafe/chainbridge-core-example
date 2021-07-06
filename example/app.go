@@ -5,7 +5,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	celoVoter "github.com/ChainSafe/chainbridge-celo-module/voter"
+	//celoVoter "github.com/ChainSafe/chainbridge-celo-module/voter"
 	"github.com/ChainSafe/chainbridge-core-example/example/keystore"
 	"github.com/ChainSafe/chainbridge-core/chains/evm"
 	"github.com/ChainSafe/chainbridge-core/chains/evm/evmclient"
@@ -88,21 +88,37 @@ func Run() error {
 	subChain := substrate.NewSubstrateChain(subL, subW, db, *subCfg.SharedSubstrateConfig.GeneralChainConfig.Id, &subCfg.SharedSubstrateConfig)
 
 	// Celo setup
-	ethClientCelo := evmclient.NewEVMClient()
+	// ethClientCelo := evmclient.NewEVMClient()
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// celoCfg := ethClient.GetConfig()
+	// ethClientCelo.Configurate(viper.GetString(config.ConfigFlagName), "config_celo")
+	// eventHandlerCelo := listener.NewETHEventHandler(common.HexToAddress("0x62877dDCd49aD22f5eDfc6ac108e9a4b5D2bD88B"), ethClientCelo)
+	// eventHandlerCelo.RegisterEventHandler("0x3167776db165D8eA0f51790CA2bbf44Db5105ADF", listener.Erc20EventHandler)
+	// evmListenerCelo := listener.NewEVMListener(ethClientCelo, eventHandlerCelo, common.HexToAddress("0x62877dDCd49aD22f5eDfc6ac108e9a4b5D2bD88B"))
+	// mhCelo := voter.NewEVMMessageHandler(ethClientCelo, common.HexToAddress("0x62877dDCd49aD22f5eDfc6ac108e9a4b5D2bD88B"))
+	// mhCelo.RegisterMessageHandler(common.HexToAddress("0x3167776db165D8eA0f51790CA2bbf44Db5105ADF"), celoVoter.ERC20CeloMessageHandler)
+	// evmVoterCelo := voter.NewVoter(mhCelo, ethClientCelo)
+	// celoChain := evm.NewEVMChain(evmListenerCelo, evmVoterCelo, db, 2, &celoCfg.SharedEVMConfig)
+
+	// Optimism setup
+	ethClientOptimism := evmclient.NewEVMClient()
+	err = ethClientOptimism.Configurate(viper.GetString(config.ConfigFlagName), "config_optimism")
 	if err != nil {
 		panic(err)
 	}
-	celoCfg := ethClient.GetConfig()
-	ethClientCelo.Configurate(viper.GetString(config.ConfigFlagName), "config_celo")
-	eventHandlerCelo := listener.NewETHEventHandler(common.HexToAddress("0x62877dDCd49aD22f5eDfc6ac108e9a4b5D2bD88B"), ethClientCelo)
-	eventHandlerCelo.RegisterEventHandler("0x3167776db165D8eA0f51790CA2bbf44Db5105ADF", listener.Erc20EventHandler)
-	evmListenerCelo := listener.NewEVMListener(ethClientCelo, eventHandlerCelo, common.HexToAddress("0x62877dDCd49aD22f5eDfc6ac108e9a4b5D2bD88B"))
-	mhCelo := voter.NewEVMMessageHandler(ethClientCelo, common.HexToAddress("0x62877dDCd49aD22f5eDfc6ac108e9a4b5D2bD88B"))
-	mhCelo.RegisterMessageHandler(common.HexToAddress("0x3167776db165D8eA0f51790CA2bbf44Db5105ADF"), celoVoter.ERC20CeloMessageHandler)
-	evmVoterCelo := voter.NewVoter(mhCelo, ethClientCelo)
-	celoChain := evm.NewEVMChain(evmListenerCelo, evmVoterCelo, db, 2, &celoCfg.SharedEVMConfig)
+	optimismCfg := ethClientOptimism.GetConfig()
 
-	r := relayer.NewRelayer([]relayer.RelayedChain{subChain, evmChain, celoChain})
+	eventHandlerOptimism := listener.NewETHEventHandler(common.HexToAddress(optimismCfg.SharedEVMConfig.Bridge), ethClientOptimism)
+	eventHandlerOptimism.RegisterEventHandler(optimismCfg.SharedEVMConfig.Erc20Handler, listener.Erc20EventHandler)
+	evmListenerOptimism := listener.NewEVMListener(ethClientOptimism, eventHandlerOptimism, common.HexToAddress(optimismCfg.SharedEVMConfig.Bridge))
+	mhOptimism := voter.NewEVMMessageHandler(ethClientOptimism, common.HexToAddress(optimismCfg.SharedEVMConfig.Bridge))
+	mh.RegisterMessageHandler(common.HexToAddress(optimismCfg.SharedEVMConfig.Erc20Handler), voter.ERC20MessageHandler)
+	evmVoterOptimism := voter.NewVoter(mhOptimism, ethClientOptimism)
+	optimismChain := evm.NewEVMChain(evmListenerOptimism, evmVoterOptimism, db, *optimismCfg.SharedEVMConfig.GeneralChainConfig.Id, &optimismCfg.SharedEVMConfig)
+
+	r := relayer.NewRelayer([]relayer.RelayedChain{subChain, evmChain, optimismChain})
 
 	go r.Start(stopChn, errChn)
 
