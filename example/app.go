@@ -49,7 +49,7 @@ func Run() error {
 
 	// rinkeby
 	ethClient := evmclient.NewEVMClient()
-	err = ethClient.Configurate(viper.GetString(config.ConfigFlagName), "config_rinkeby")
+	err = ethClient.Configurate(viper.GetString(config.ConfigFlagName), "config_rinkeby.json")
 	if err != nil {
 		panic(err)
 	}
@@ -69,7 +69,7 @@ func Run() error {
 		panic(err)
 	}
 	goerliCfg := ethClient.GetConfig()
-	err = goerliClient.Configurate(viper.GetString(config.ConfigFlagName), "config_goerli")
+	err = goerliClient.Configurate(viper.GetString(config.ConfigFlagName), "config_goerli.json")
 	if err != nil {
 		panic(err)
 	}

@@ -1,14 +1,13 @@
 {
   "name": "goerli",
-  "id": "0",
-  "endpoint": "ws://localhost:8545",
-  "from": "0xa2671890788c9809ab143606d09ec85621e82e88",
-  "bridge": "0x6E5F2106184b90B030622D7E353244C27c5e2d83",
-  "erc20Handler": "0xa8EDC7ad8ab91cDCaB6a033Ed63b70B45917dE61",
-  "erc721Handler": "0x8CFce9C250615E92e56A4dA09D833B270222E910",
-  "genericHandler": "0x29fCceC8e499aF3d1E8281a5DE4665B2597D6076",
-  "gasLimit": "3000000",
+  "id": "1",
+  "endpoint": "ws://localhost:8646",
+  "from": "0x69f58a2b492f0810AFdcaD9E7e7777a266Dbc86f",
+  "bridge": "0xF014f5c6B88C7D74c846eEEEE29c55d6BB51D9B0",
+  "erc20Handler": "0xa52624ac54165113913D37184AA5957DB99CF2C9",
+  "erc721Handler": "0x614a46ef7Cd5C577A4D82a1CD7d46750b85efa98",
+  "genericHandler": "0xC4080152fb4A8f1Ae99A82548d23eFfA39a24d41",
+  "gasLimit": "9000000",
   "maxGasPrice": "20000000000",
-  "http": "false",
   "blockConfirmations": "10"
 }
