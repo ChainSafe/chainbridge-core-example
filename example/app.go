@@ -114,7 +114,7 @@ func Run() error {
 	eventHandlerOptimism.RegisterEventHandler(optimismCfg.SharedEVMConfig.Erc20Handler, listener.Erc20EventHandler)
 	evmListenerOptimism := listener.NewEVMListener(ethClientOptimism, eventHandlerOptimism, common.HexToAddress(optimismCfg.SharedEVMConfig.Bridge))
 	mhOptimism := voter.NewEVMMessageHandler(ethClientOptimism, common.HexToAddress(optimismCfg.SharedEVMConfig.Bridge))
-	mh.RegisterMessageHandler(common.HexToAddress(optimismCfg.SharedEVMConfig.Erc20Handler), voter.ERC20MessageHandler)
+	mhOptimism.RegisterMessageHandler(common.HexToAddress(optimismCfg.SharedEVMConfig.Erc20Handler), voter.ERC20MessageHandler)
 	evmVoterOptimism := voter.NewVoter(mhOptimism, ethClientOptimism)
 	optimismChain := evm.NewEVMChain(evmListenerOptimism, evmVoterOptimism, db, *optimismCfg.SharedEVMConfig.GeneralChainConfig.Id, &optimismCfg.SharedEVMConfig)
 

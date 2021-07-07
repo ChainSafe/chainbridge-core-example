@@ -2,10 +2,9 @@ module github.com/ChainSafe/chainbridge-core-example
 
 go 1.16
 
-replace github.com/ChainSafe/chainbridge-celo-module v0.0.0-20210702092144-957c6185d362 => ../chainbridge-celo-module
+replace github.com/ChainSafe/chainbridge-core v0.0.0-20210702100132-02c27c19f784 => ../chainbridge-core
 
 require (
-	github.com/ChainSafe/chainbridge-celo-module v0.0.0-20210702092144-957c6185d362
 	github.com/ChainSafe/chainbridge-core v0.0.0-20210702100132-02c27c19f784
 	github.com/ChainSafe/chainbridge-substrate-module v0.0.0-20210702094734-46ca400fcfc1
 	github.com/centrifuge/go-substrate-rpc-client v2.0.0+incompatible
