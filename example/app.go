@@ -79,7 +79,7 @@ func Run() error {
 	mhGoerli := voter.NewEVMMessageHandler(goerliClient, common.HexToAddress(goerliCfg.SharedEVMConfig.Bridge))
 	mhGoerli.RegisterMessageHandler(common.HexToAddress(goerliCfg.SharedEVMConfig.Erc20Handler), voter.ERC20MessageHandler)
 	goerliVoter := voter.NewVoter(mhGoerli, goerliClient)
-	goerliChain := evm.NewEVMChain(goerliListener, goerliVoter, db, 2, &goerliCfg.SharedEVMConfig)
+	goerliChain := evm.NewEVMChain(goerliListener, goerliVoter, db, *goerliCfg.SharedEVMConfig.GeneralChainConfig.Id, &goerliCfg.SharedEVMConfig)
 
 	r := relayer.NewRelayer([]relayer.RelayedChain{evmChain, goerliChain})
 
