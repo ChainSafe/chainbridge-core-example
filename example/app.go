@@ -13,7 +13,6 @@ import (
 	"github.com/ChainSafe/chainbridge-core/chains/evm/evmclient"
 	"github.com/ChainSafe/chainbridge-core/chains/evm/listener"
 	"github.com/ChainSafe/chainbridge-core/chains/evm/voter"
-
 	"github.com/ChainSafe/chainbridge-core/config"
 	"github.com/ChainSafe/chainbridge-core/lvldb"
 	"github.com/ChainSafe/chainbridge-core/relayer"
@@ -68,11 +67,11 @@ func Run() error {
 	if err != nil {
 		panic(err)
 	}
-	goerliCfg := ethClient.GetConfig()
 	err = goerliClient.Configurate(viper.GetString(config.ConfigFlagName), "config_goerli.json")
 	if err != nil {
 		panic(err)
 	}
+	goerliCfg := goerliClient.GetConfig()
 	eventHandlerGoerli := listener.NewETHEventHandler(common.HexToAddress(goerliCfg.SharedEVMConfig.Bridge), goerliClient)
 	eventHandlerGoerli.RegisterEventHandler(goerliCfg.SharedEVMConfig.Erc20Handler, listener.Erc20EventHandler)
 	goerliListener := listener.NewEVMListener(goerliClient, eventHandlerGoerli, common.HexToAddress(goerliCfg.SharedEVMConfig.Bridge))
