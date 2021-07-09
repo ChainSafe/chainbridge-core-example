@@ -72,6 +72,7 @@ func Run() error {
 		panic(err)
 	}
 	goerliCfg := goerliClient.GetConfig()
+
 	eventHandlerGoerli := listener.NewETHEventHandler(common.HexToAddress(goerliCfg.SharedEVMConfig.Bridge), goerliClient)
 	eventHandlerGoerli.RegisterEventHandler(goerliCfg.SharedEVMConfig.Erc20Handler, listener.Erc20EventHandler)
 	goerliListener := listener.NewEVMListener(goerliClient, eventHandlerGoerli, common.HexToAddress(goerliCfg.SharedEVMConfig.Bridge))

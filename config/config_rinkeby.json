@@ -1,8 +1,8 @@
 {
   "name": "rinkeby",
   "id": "0",
-  "endpoint": "ws://localhost:8546",
-  "from": "0x69f58a2b492f0810AFdcaD9E7e7777a266Dbc86f",
+  "endpoint": "ws://0.0.0.0:8546",
+  "from": "0x5cd179868C001c9f8d3738Ef9c349F2BBeBa8f88",
   "bridge": "0x691DCf269FDb2B9e4229d27fEd2FA7cEeBF660C8",
   "erc20Handler": "0x4051C29d0545923554E3aBae5a31b5fb27e5949f",
   "erc721Handler": "0xa501108F706E8f2623797438c57E430066C5e121",
