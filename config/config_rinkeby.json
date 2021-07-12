@@ -1,0 +1,13 @@
+{
+  "name": "rinkeby",
+  "id": "0",
+  "endpoint": "ws://0.0.0.0:8546",
+  "from": "0x5cd179868C001c9f8d3738Ef9c349F2BBeBa8f88",
+  "bridge": "0x691DCf269FDb2B9e4229d27fEd2FA7cEeBF660C8",
+  "erc20Handler": "0x4051C29d0545923554E3aBae5a31b5fb27e5949f",
+  "erc721Handler": "0xa501108F706E8f2623797438c57E430066C5e121",
+  "genericHandler": "0x49D22Db9c82D391D10d46a2D00d0c01A04eA7a83",
+  "gasLimit": "8000000",
+  "maxGasPrice": "20000000000",
+  "blockConfirmations": "10"
+}

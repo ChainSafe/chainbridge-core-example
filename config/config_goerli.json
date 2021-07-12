@@ -1,0 +1,13 @@
+{
+  "name": "goerli",
+  "id": "1",
+  "endpoint": "ws://0.0.0.0:8646",
+  "from": "0x5cd179868C001c9f8d3738Ef9c349F2BBeBa8f88",
+  "bridge": "0xF014f5c6B88C7D74c846eEEEE29c55d6BB51D9B0",
+  "erc20Handler": "0xa52624ac54165113913D37184AA5957DB99CF2C9",
+  "erc721Handler": "0x614a46ef7Cd5C577A4D82a1CD7d46750b85efa98",
+  "genericHandler": "0xC4080152fb4A8f1Ae99A82548d23eFfA39a24d41",
+  "gasLimit": "9000000",
+  "maxGasPrice": "20000000000",
+  "blockConfirmations": "10"
+}

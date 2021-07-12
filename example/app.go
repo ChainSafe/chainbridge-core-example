@@ -1,3 +1,6 @@
+// Copyright 2021 ChainSafe Systems
+// SPDX-License-Identifier: LGPL-3.0-only
+
 package example
 
 import (
@@ -10,14 +13,9 @@ import (
 	"github.com/ChainSafe/chainbridge-core/chains/evm/evmclient"
 	"github.com/ChainSafe/chainbridge-core/chains/evm/listener"
 	"github.com/ChainSafe/chainbridge-core/chains/evm/voter"
-
-	"github.com/ChainSafe/chainbridge-core/chains/substrate"
-	subListener "github.com/ChainSafe/chainbridge-core/chains/substrate/listener"
-	subWriter "github.com/ChainSafe/chainbridge-core/chains/substrate/writer"
 	"github.com/ChainSafe/chainbridge-core/config"
 	"github.com/ChainSafe/chainbridge-core/lvldb"
 	"github.com/ChainSafe/chainbridge-core/relayer"
-	subModule "github.com/ChainSafe/chainbridge-substrate-module"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
@@ -37,10 +35,6 @@ var (
 	}
 )
 
-const DefaultGasLimit = 6721975
-const DefaultGasPrice = 20000000000
-
-const TestEndpoint = "ws://localhost:8545"
 
 //Bridge:             0x62877dDCd49aD22f5eDfc6ac108e9a4b5D2bD88B
 //Erc20 Handler:      0x3167776db165D8eA0f51790CA2bbf44Db5105ADF
@@ -52,8 +46,10 @@ func Run() error {
 	if err != nil {
 		panic(err)
 	}
+
+	// rinkeby
 	ethClient := evmclient.NewEVMClient()
-	err = ethClient.Configurate(viper.GetString(config.ConfigFlagName), "config")
+	err = ethClient.Configurate(viper.GetString(config.ConfigFlagName), "config_rinkeby.json")
 	if err != nil {
 		panic(err)
 	}
@@ -67,25 +63,27 @@ func Run() error {
 	evmVoter := voter.NewVoter(mh, ethClient)
 	evmChain := evm.NewEVMChain(evmListener, evmVoter, db, *ethCfg.SharedEVMConfig.GeneralChainConfig.Id, &ethCfg.SharedEVMConfig)
 
-	subC := subModule.NewSubstrateClient(stopChn)
-	err = subC.Configurate(viper.GetString(config.ConfigFlagName), "subConfig")
+	// goerli setup
+	goerliClient := evmclient.NewEVMClient()
 	if err != nil {
 		panic(err)
 	}
-	subCfg := subC.GetConfig()
 
-	subL := subListener.NewSubstrateListener(subC)
-	subW := subWriter.NewSubstrateWriter(1, subC)
+	err = goerliClient.Configurate(viper.GetString(config.ConfigFlagName), "config_goerli.json")
+	if err != nil {
+		panic(err)
+	}
+	goerliCfg := goerliClient.GetConfig()
 
-	// TODO: really not need this dynamic handler assignment
-	subL.RegisterSubscription(relayer.FungibleTransfer, subListener.FungibleTransferHandler)
-	subL.RegisterSubscription(relayer.GenericTransfer, subListener.GenericTransferHandler)
-	subL.RegisterSubscription(relayer.NonFungibleTransfer, subListener.NonFungibleTransferHandler)
+	eventHandlerGoerli := listener.NewETHEventHandler(common.HexToAddress(goerliCfg.SharedEVMConfig.Bridge), goerliClient)
+	eventHandlerGoerli.RegisterEventHandler(goerliCfg.SharedEVMConfig.Erc20Handler, listener.Erc20EventHandler)
+	goerliListener := listener.NewEVMListener(goerliClient, eventHandlerGoerli, common.HexToAddress(goerliCfg.SharedEVMConfig.Bridge))
+	mhGoerli := voter.NewEVMMessageHandler(goerliClient, common.HexToAddress(goerliCfg.SharedEVMConfig.Bridge))
+	mhGoerli.RegisterMessageHandler(common.HexToAddress(goerliCfg.SharedEVMConfig.Erc20Handler), voter.ERC20MessageHandler)
+	goerliVoter := voter.NewVoter(mhGoerli, goerliClient)
+	goerliChain := evm.NewEVMChain(goerliListener, goerliVoter, db, *goerliCfg.SharedEVMConfig.GeneralChainConfig.Id, &goerliCfg.SharedEVMConfig)
 
-	subW.RegisterHandler(relayer.FungibleTransfer, subWriter.CreateFungibleProposal)
-	subChain := substrate.NewSubstrateChain(subL, subW, db, *subCfg.SharedSubstrateConfig.GeneralChainConfig.Id, &subCfg.SharedSubstrateConfig)
-
-	r := relayer.NewRelayer([]relayer.RelayedChain{subChain, evmChain})
+	r := relayer.NewRelayer([]relayer.RelayedChain{evmChain, goerliChain})
 
 	go r.Start(stopChn, errChn)
 
