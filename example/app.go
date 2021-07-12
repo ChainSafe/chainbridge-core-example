@@ -35,6 +35,7 @@ var (
 	}
 )
 
+
 //Bridge:             0x62877dDCd49aD22f5eDfc6ac108e9a4b5D2bD88B
 //Erc20 Handler:      0x3167776db165D8eA0f51790CA2bbf44Db5105ADF
 func Run() error {
@@ -67,6 +68,7 @@ func Run() error {
 	if err != nil {
 		panic(err)
 	}
+
 	err = goerliClient.Configurate(viper.GetString(config.ConfigFlagName), "config_goerli.json")
 	if err != nil {
 		panic(err)

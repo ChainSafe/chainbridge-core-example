@@ -9,13 +9,6 @@ services:
     ports:
       - "8545:8545"
 
-  celo:
-    image: "chainsafe/chainbridge-celo-blockchain:0.1.1"
-    container_name: celo
-    ports:
-      - "8546:8545"
-
-
   sub-chain:
     image: "chainsafe/chainbridge-substrate-chain:v1.3.0"
     container_name: sub-chain
