@@ -3,9 +3,10 @@ module github.com/ChainSafe/chainbridge-core-example
 go 1.16
 
 require (
-	github.com/ChainSafe/chainbridge-core v0.0.0-20210709121054-17ced5f3780e
+	github.com/ChainSafe/chainbridge-core v0.0.0-20210712095225-dd3876a066e4
 	github.com/centrifuge/go-substrate-rpc-client v2.0.0+incompatible
 	github.com/ethereum/go-ethereum v1.10.4
+	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/rs/zerolog v1.23.0
 	github.com/spf13/cobra v1.2.1
 	github.com/spf13/viper v1.8.1
