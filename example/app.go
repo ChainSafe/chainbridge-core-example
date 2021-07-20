@@ -8,9 +8,13 @@ import (
 	//celoVoter "github.com/ChainSafe/chainbridge-celo-module/voter"
 	"github.com/ChainSafe/chainbridge-core-example/example/keystore"
 	"github.com/ChainSafe/chainbridge-core/chains/evm"
+
 	"github.com/ChainSafe/chainbridge-core/chains/evm/evmclient"
 	"github.com/ChainSafe/chainbridge-core/chains/evm/listener"
 	"github.com/ChainSafe/chainbridge-core/chains/evm/voter"
+	"github.com/ChainSafe/chainbridge-core/chains/optimism/optimismclient"
+
+	optimismListener "github.com/ChainSafe/chainbridge-core/chains/optimism/listener"
 
 	"github.com/ChainSafe/chainbridge-core/chains/substrate"
 	subListener "github.com/ChainSafe/chainbridge-core/chains/substrate/listener"
@@ -77,7 +81,11 @@ func Run() error {
 	subCfg := subC.GetConfig()
 
 	subL := subListener.NewSubstrateListener(subC)
-	subW := subWriter.NewSubstrateWriter(1, subC)
+	subW := subWriter.NewSubstrateWriter(
+		*subCfg.SharedSubstrateConfig.GeneralChainConfig.Id,
+		subC,
+		subCfg.SharedSubstrateConfig.UseExtendedCall,
+	)
 
 	// TODO: really not need this dynamic handler assignment
 	subL.RegisterSubscription(relayer.FungibleTransfer, subListener.FungibleTransferHandler)
@@ -103,16 +111,16 @@ func Run() error {
 	// celoChain := evm.NewEVMChain(evmListenerCelo, evmVoterCelo, db, 2, &celoCfg.SharedEVMConfig)
 
 	// Optimism setup
-	ethClientOptimism := evmclient.NewEVMClient()
+	ethClientOptimism := optimismclient.NewEVMClient()
 	err = ethClientOptimism.Configurate(viper.GetString(config.ConfigFlagName), "config_optimism")
 	if err != nil {
 		panic(err)
 	}
 	optimismCfg := ethClientOptimism.GetConfig()
 
-	eventHandlerOptimism := listener.NewETHEventHandler(common.HexToAddress(optimismCfg.SharedEVMConfig.Bridge), ethClientOptimism)
-	eventHandlerOptimism.RegisterEventHandler(optimismCfg.SharedEVMConfig.Erc20Handler, listener.Erc20EventHandler)
-	evmListenerOptimism := listener.NewEVMListener(ethClientOptimism, eventHandlerOptimism, common.HexToAddress(optimismCfg.SharedEVMConfig.Bridge))
+	eventHandlerOptimism := optimismListener.NewETHEventHandler(common.HexToAddress(optimismCfg.SharedEVMConfig.Bridge), ethClientOptimism)
+	eventHandlerOptimism.RegisterEventHandler(optimismCfg.SharedEVMConfig.Erc20Handler, optimismListener.Erc20EventHandler)
+	evmListenerOptimism := optimismListener.NewEVMListener(ethClientOptimism, eventHandlerOptimism, common.HexToAddress(optimismCfg.SharedEVMConfig.Bridge))
 	mhOptimism := voter.NewEVMMessageHandler(ethClientOptimism, common.HexToAddress(optimismCfg.SharedEVMConfig.Bridge))
 	mhOptimism.RegisterMessageHandler(common.HexToAddress(optimismCfg.SharedEVMConfig.Erc20Handler), voter.ERC20MessageHandler)
 	evmVoterOptimism := voter.NewVoter(mhOptimism, ethClientOptimism)
