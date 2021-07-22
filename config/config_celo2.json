@@ -1,5 +1,5 @@
 {
-  "name": "rinkeby",
+  "name": "celo1",
   "id": "0",
   "endpoint": "ws://0.0.0.0:8546",
   "from": "0x5cd179868C001c9f8d3738Ef9c349F2BBeBa8f88",

@@ -47,43 +47,42 @@ func Run() error {
 		panic(err)
 	}
 
-	// rinkeby
-	ethClient := evmclient.NewEVMClient()
-	err = ethClient.Configurate(viper.GetString(config.ConfigFlagName), "config_rinkeby.json")
+	// CELO1 setup
+	celo1Client := evmclient.NewEVMClient()
+	err = celo1Client.Configurate(viper.GetString(config.ConfigFlagName), "config_celo1.json")
 	if err != nil {
 		panic(err)
 	}
-	ethCfg := ethClient.GetConfig()
+	celo1Cfg := celo1Client.GetConfig()
 
-	eventHandler := listener.NewETHEventHandler(common.HexToAddress(ethCfg.SharedEVMConfig.Bridge), ethClient)
-	eventHandler.RegisterEventHandler(ethCfg.SharedEVMConfig.Erc20Handler, listener.Erc20EventHandler)
-	evmListener := listener.NewEVMListener(ethClient, eventHandler, common.HexToAddress(ethCfg.SharedEVMConfig.Bridge))
-	mh := voter.NewEVMMessageHandler(ethClient, common.HexToAddress(ethCfg.SharedEVMConfig.Bridge))
-	mh.RegisterMessageHandler(common.HexToAddress(ethCfg.SharedEVMConfig.Erc20Handler), voter.ERC20MessageHandler)
-	evmVoter := voter.NewVoter(mh, ethClient)
-	evmChain := evm.NewEVMChain(evmListener, evmVoter, db, *ethCfg.SharedEVMConfig.GeneralChainConfig.Id, &ethCfg.SharedEVMConfig)
+	eventHandler := listener.NewETHEventHandler(common.HexToAddress(celo1Cfg.SharedEVMConfig.Bridge), celo1Client)
+	eventHandler.RegisterEventHandler(celo1Cfg.SharedEVMConfig.Erc20Handler, listener.Erc20EventHandler)
+	celoListener1 := listener.NewEVMListener(celo1Client, eventHandler, common.HexToAddress(celo1Cfg.SharedEVMConfig.Bridge))
+	mh := voter.NewEVMMessageHandler(celo1Client, common.HexToAddress(celo1Cfg.SharedEVMConfig.Bridge))
+	mh.RegisterMessageHandler(common.HexToAddress(celo1Cfg.SharedEVMConfig.Erc20Handler), voter.ERC20MessageHandler)
+	celoVoter1 := voter.NewVoter(mh, celo1Client)
+	celoChain1 := evm.NewEVMChain(celoListener1, celoVoter1, db, *celo1Cfg.SharedEVMConfig.GeneralChainConfig.Id, &celo1Cfg.SharedEVMConfig)
 
-	// goerli setup
-	goerliClient := evmclient.NewEVMClient()
+	//// CELO2 setup
+	celoClient2 := evmclient.NewEVMClient()
 	if err != nil {
 		panic(err)
 	}
-
-	err = goerliClient.Configurate(viper.GetString(config.ConfigFlagName), "config_goerli.json")
+	err = celoClient2.Configurate(viper.GetString(config.ConfigFlagName), "config_celo2.json")
 	if err != nil {
 		panic(err)
 	}
-	goerliCfg := goerliClient.GetConfig()
+	celoConfig2 := celoClient2.GetConfig()
 
-	eventHandlerGoerli := listener.NewETHEventHandler(common.HexToAddress(goerliCfg.SharedEVMConfig.Bridge), goerliClient)
-	eventHandlerGoerli.RegisterEventHandler(goerliCfg.SharedEVMConfig.Erc20Handler, listener.Erc20EventHandler)
-	goerliListener := listener.NewEVMListener(goerliClient, eventHandlerGoerli, common.HexToAddress(goerliCfg.SharedEVMConfig.Bridge))
-	mhGoerli := voter.NewEVMMessageHandler(goerliClient, common.HexToAddress(goerliCfg.SharedEVMConfig.Bridge))
-	mhGoerli.RegisterMessageHandler(common.HexToAddress(goerliCfg.SharedEVMConfig.Erc20Handler), voter.ERC20MessageHandler)
-	goerliVoter := voter.NewVoter(mhGoerli, goerliClient)
-	goerliChain := evm.NewEVMChain(goerliListener, goerliVoter, db, *goerliCfg.SharedEVMConfig.GeneralChainConfig.Id, &goerliCfg.SharedEVMConfig)
+	eventHandlerCelo2 := listener.NewETHEventHandler(common.HexToAddress(celoConfig2.SharedEVMConfig.Bridge), celoClient2)
+	eventHandlerCelo2.RegisterEventHandler(celoConfig2.SharedEVMConfig.Erc20Handler, listener.Erc20EventHandler)
+	goerliListener := listener.NewEVMListener(celoClient2, eventHandlerCelo2, common.HexToAddress(celoConfig2.SharedEVMConfig.Bridge))
+	mhCelo2 := voter.NewEVMMessageHandler(celoClient2, common.HexToAddress(celoConfig2.SharedEVMConfig.Bridge))
+	mhCelo2.RegisterMessageHandler(common.HexToAddress(celoConfig2.SharedEVMConfig.Erc20Handler), voter.ERC20MessageHandler)
+	celoVoter2 := voter.NewVoter(mhCelo2, celoClient2)
+	celoChain2 := evm.NewEVMChain(goerliListener, celoVoter2, db, *celoConfig2.SharedEVMConfig.GeneralChainConfig.Id, &celoConfig2.SharedEVMConfig)
 
-	r := relayer.NewRelayer([]relayer.RelayedChain{evmChain, goerliChain})
+	r := relayer.NewRelayer([]relayer.RelayedChain{celoChain1, celoChain2})
 
 	go r.Start(stopChn, errChn)
 

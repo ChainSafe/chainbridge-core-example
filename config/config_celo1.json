@@ -1,5 +1,5 @@
 {
-  "name": "goerli",
+  "name": "celo2",
   "id": "1",
   "endpoint": "ws://0.0.0.0:8646",
   "from": "0x5cd179868C001c9f8d3738Ef9c349F2BBeBa8f88",
