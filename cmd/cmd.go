@@ -13,10 +13,6 @@ var (
 	}
 )
 
-func init() {
-	// rootCMD.AddCommand(evmClient.CLI()) // Example of how CLI should be registered
-}
-
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
 		log.Fatal().Err(err).Msg("failed to execute root cmd")
