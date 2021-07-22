@@ -1,33 +1,24 @@
 package cmd
 
 import (
-	"github.com/ChainSafe/chainbridge-core-example/example"
-	"github.com/ChainSafe/chainbridge-core/config"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
 
 var (
-	rootCMD = &cobra.Command{
-		Use:   "run",
-		Short: "Run example app",
-		Long:  "Run example app",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			if err := example.Run(); err != nil {
-				return err
-			}
-			return nil
-		},
+	rootCmd = &cobra.Command{
+		Use:   "chainbridge-core-example",
+		Short: "Chainbridge Core Example app",
+		Long:  "Chainbridge Core Example app",
 	}
 )
 
 func init() {
-	//rootCMD.AddCommand(evmClient.CLI()) // Example of how CLI should be registered
-	config.BindFlags(rootCMD)
+	// rootCMD.AddCommand(evmClient.CLI()) // Example of how CLI should be registered
 }
 
 func Execute() {
-	if err := rootCMD.Execute(); err != nil {
+	if err := rootCmd.Execute(); err != nil {
 		log.Fatal().Err(err).Msg("failed to execute root cmd")
 	}
 }
