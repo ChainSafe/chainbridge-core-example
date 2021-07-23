@@ -16,13 +16,14 @@ import (
 
 	optimismListener "github.com/ChainSafe/chainbridge-core/chains/optimism/listener"
 
-	"github.com/ChainSafe/chainbridge-core/chains/substrate"
-	subListener "github.com/ChainSafe/chainbridge-core/chains/substrate/listener"
-	subWriter "github.com/ChainSafe/chainbridge-core/chains/substrate/writer"
+	// "github.com/ChainSafe/chainbridge-core/chains/substrate"
+	// subListener "github.com/ChainSafe/chainbridge-core/chains/substrate/listener"
+	// subWriter "github.com/ChainSafe/chainbridge-core/chains/substrate/writer"
 	"github.com/ChainSafe/chainbridge-core/config"
 	"github.com/ChainSafe/chainbridge-core/lvldb"
 	"github.com/ChainSafe/chainbridge-core/relayer"
-	subModule "github.com/ChainSafe/chainbridge-substrate-module"
+
+	//subModule "github.com/ChainSafe/chainbridge-substrate-module"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
@@ -73,27 +74,27 @@ func Run() error {
 	evmVoter := voter.NewVoter(mh, ethClient)
 	evmChain := evm.NewEVMChain(evmListener, evmVoter, db, *ethCfg.SharedEVMConfig.GeneralChainConfig.Id, &ethCfg.SharedEVMConfig)
 
-	subC := subModule.NewSubstrateClient(stopChn)
-	err = subC.Configurate(viper.GetString(config.ConfigFlagName), "subConfig")
-	if err != nil {
-		panic(err)
-	}
-	subCfg := subC.GetConfig()
+	// subC := subModule.NewSubstrateClient(stopChn)
+	// err = subC.Configurate(viper.GetString(config.ConfigFlagName), "subConfig")
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// subCfg := subC.GetConfig()
 
-	subL := subListener.NewSubstrateListener(subC)
-	subW := subWriter.NewSubstrateWriter(
-		*subCfg.SharedSubstrateConfig.GeneralChainConfig.Id,
-		subC,
-		subCfg.SharedSubstrateConfig.UseExtendedCall,
-	)
+	// subL := subListener.NewSubstrateListener(subC)
+	// subW := subWriter.NewSubstrateWriter(
+	// 	*subCfg.SharedSubstrateConfig.GeneralChainConfig.Id,
+	// 	subC,
+	// 	subCfg.SharedSubstrateConfig.UseExtendedCall,
+	// )
 
-	// TODO: really not need this dynamic handler assignment
-	subL.RegisterSubscription(relayer.FungibleTransfer, subListener.FungibleTransferHandler)
-	subL.RegisterSubscription(relayer.GenericTransfer, subListener.GenericTransferHandler)
-	subL.RegisterSubscription(relayer.NonFungibleTransfer, subListener.NonFungibleTransferHandler)
+	// // TODO: really not need this dynamic handler assignment
+	// subL.RegisterSubscription(relayer.FungibleTransfer, subListener.FungibleTransferHandler)
+	// subL.RegisterSubscription(relayer.GenericTransfer, subListener.GenericTransferHandler)
+	// subL.RegisterSubscription(relayer.NonFungibleTransfer, subListener.NonFungibleTransferHandler)
 
-	subW.RegisterHandler(relayer.FungibleTransfer, subWriter.CreateFungibleProposal)
-	subChain := substrate.NewSubstrateChain(subL, subW, db, *subCfg.SharedSubstrateConfig.GeneralChainConfig.Id, &subCfg.SharedSubstrateConfig)
+	// subW.RegisterHandler(relayer.FungibleTransfer, subWriter.CreateFungibleProposal)
+	// subChain := substrate.NewSubstrateChain(subL, subW, db, *subCfg.SharedSubstrateConfig.GeneralChainConfig.Id, &subCfg.SharedSubstrateConfig)
 
 	// Celo setup
 	// ethClientCelo := evmclient.NewEVMClient()
@@ -126,7 +127,7 @@ func Run() error {
 	evmVoterOptimism := voter.NewVoter(mhOptimism, ethClientOptimism)
 	optimismChain := evm.NewEVMChain(evmListenerOptimism, evmVoterOptimism, db, *optimismCfg.SharedEVMConfig.GeneralChainConfig.Id, &optimismCfg.SharedEVMConfig)
 
-	r := relayer.NewRelayer([]relayer.RelayedChain{subChain, evmChain, optimismChain})
+	r := relayer.NewRelayer([]relayer.RelayedChain{evmChain, optimismChain})
 
 	go r.Start(stopChn, errChn)
 
