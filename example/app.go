@@ -5,20 +5,15 @@ import (
 	"os/signal"
 	"syscall"
 
-	celoVoter "github.com/ChainSafe/chainbridge-celo-module/voter"
 	"github.com/ChainSafe/chainbridge-core-example/example/keystore"
 	"github.com/ChainSafe/chainbridge-core/chains/evm"
 	"github.com/ChainSafe/chainbridge-core/chains/evm/evmclient"
 	"github.com/ChainSafe/chainbridge-core/chains/evm/listener"
 	"github.com/ChainSafe/chainbridge-core/chains/evm/voter"
 
-	"github.com/ChainSafe/chainbridge-core/chains/substrate"
-	subListener "github.com/ChainSafe/chainbridge-core/chains/substrate/listener"
-	subWriter "github.com/ChainSafe/chainbridge-core/chains/substrate/writer"
 	"github.com/ChainSafe/chainbridge-core/config"
 	"github.com/ChainSafe/chainbridge-core/lvldb"
 	"github.com/ChainSafe/chainbridge-core/relayer"
-	subModule "github.com/ChainSafe/chainbridge-substrate-module"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
@@ -55,7 +50,7 @@ func Run() error {
 		panic(err)
 	}
 	ethClient := evmclient.NewEVMClient()
-	err = ethClient.Configurate(viper.GetString(config.ConfigFlagName), "config")
+	err = ethClient.Configurate(viper.GetString(config.ConfigFlagName), "kaleido_config")
 	if err != nil {
 		panic(err)
 	}
@@ -68,41 +63,54 @@ func Run() error {
 	mh.RegisterMessageHandler(common.HexToAddress(ethCfg.SharedEVMConfig.Erc20Handler), voter.ERC20MessageHandler)
 	evmVoter := voter.NewVoter(mh, ethClient)
 	evmChain := evm.NewEVMChain(evmListener, evmVoter, db, *ethCfg.SharedEVMConfig.GeneralChainConfig.Id, &ethCfg.SharedEVMConfig)
+	// subC := subModule.NewSubstrateClient(stopChn)
+	// err = subC.Configurate(viper.GetString(config.ConfigFlagName), "subConfig")
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// subCfg := subC.GetConfig()
 
-	subC := subModule.NewSubstrateClient(stopChn)
-	err = subC.Configurate(viper.GetString(config.ConfigFlagName), "subConfig")
+	// subL := subListener.NewSubstrateListener(subC)
+	// subW := subWriter.NewSubstrateWriter(1, subC)
+
+	// // TODO: really not need this dynamic handler assignment
+	// subL.RegisterSubscription(relayer.FungibleTransfer, subListener.FungibleTransferHandler)
+	// subL.RegisterSubscription(relayer.GenericTransfer, subListener.GenericTransferHandler)
+	// subL.RegisterSubscription(relayer.NonFungibleTransfer, subListener.NonFungibleTransferHandler)
+
+	// subW.RegisterHandler(relayer.FungibleTransfer, subWriter.CreateFungibleProposal)
+	// subChain := substrate.NewSubstrateChain(subL, subW, db, *subCfg.SharedSubstrateConfig.GeneralChainConfig.Id, &subCfg.SharedSubstrateConfig)
+
+	ethClient2 := evmclient.NewEVMClient()
+	err = ethClient2.Configurate(viper.GetString(config.ConfigFlagName), "kaleido_config2")
 	if err != nil {
 		panic(err)
 	}
-	subCfg := subC.GetConfig()
+	eventHandler2 := listener.NewETHEventHandler(common.HexToAddress(ethCfg.SharedEVMConfig.Bridge), ethClient2)
+	eventHandler.RegisterEventHandler(ethCfg.SharedEVMConfig.Erc20Handler, listener.Erc20EventHandler)
+	evmListener2 := listener.NewEVMListener(ethClient2, eventHandler2, common.HexToAddress(ethCfg.SharedEVMConfig.Bridge))
+	mh2 := voter.NewEVMMessageHandler(ethClient2, common.HexToAddress(ethCfg.SharedEVMConfig.Bridge))
+	mh.RegisterMessageHandler(common.HexToAddress(ethCfg.SharedEVMConfig.Erc20Handler), voter.ERC20MessageHandler)
+	evmVoter2 := voter.NewVoter(mh2, ethClient2)
+	evmChain2 := evm.NewEVMChain(evmListener2, evmVoter2, db, *ethCfg.SharedEVMConfig.GeneralChainConfig.Id, &ethCfg.SharedEVMConfig)
 
-	subL := subListener.NewSubstrateListener(subC)
-	subW := subWriter.NewSubstrateWriter(1, subC)
+	// // Celo setup
+	// ethClientCelo := evmclient.NewEVMClient()
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// celoCfg := ethClient.GetConfig()
+	// ethClientCelo.Configurate(viper.GetString(config.ConfigFlagName), "config_celo")
+	// eventHandlerCelo := listener.NewETHEventHandler(common.HexToAddress("0x62877dDCd49aD22f5eDfc6ac108e9a4b5D2bD88B"), ethClientCelo)
+	// eventHandlerCelo.RegisterEventHandler("0x3167776db165D8eA0f51790CA2bbf44Db5105ADF", listener.Erc20EventHandler)
+	// evmListenerCelo := listener.NewEVMListener(ethClientCelo, eventHandlerCelo, common.HexToAddress("0x62877dDCd49aD22f5eDfc6ac108e9a4b5D2bD88B"))
+	// mhCelo := voter.NewEVMMessageHandler(ethClientCelo, common.HexToAddress("0x62877dDCd49aD22f5eDfc6ac108e9a4b5D2bD88B"))
+	// mhCelo.RegisterMessageHandler(common.HexToAddress("0x3167776db165D8eA0f51790CA2bbf44Db5105ADF"), celoVoter.ERC20CeloMessageHandler)
+	// evmVoterCelo := voter.NewVoter(mhCelo, ethClientCelo)
+	// celoChain := evm.NewEVMChain(evmListenerCelo, evmVoterCelo, db, 2, &celoCfg.SharedEVMConfig)
 
-	// TODO: really not need this dynamic handler assignment
-	subL.RegisterSubscription(relayer.FungibleTransfer, subListener.FungibleTransferHandler)
-	subL.RegisterSubscription(relayer.GenericTransfer, subListener.GenericTransferHandler)
-	subL.RegisterSubscription(relayer.NonFungibleTransfer, subListener.NonFungibleTransferHandler)
-
-	subW.RegisterHandler(relayer.FungibleTransfer, subWriter.CreateFungibleProposal)
-	subChain := substrate.NewSubstrateChain(subL, subW, db, *subCfg.SharedSubstrateConfig.GeneralChainConfig.Id, &subCfg.SharedSubstrateConfig)
-
-	// Celo setup
-	ethClientCelo := evmclient.NewEVMClient()
-	if err != nil {
-		panic(err)
-	}
-	celoCfg := ethClient.GetConfig()
-	ethClientCelo.Configurate(viper.GetString(config.ConfigFlagName), "config_celo")
-	eventHandlerCelo := listener.NewETHEventHandler(common.HexToAddress("0x62877dDCd49aD22f5eDfc6ac108e9a4b5D2bD88B"), ethClientCelo)
-	eventHandlerCelo.RegisterEventHandler("0x3167776db165D8eA0f51790CA2bbf44Db5105ADF", listener.Erc20EventHandler)
-	evmListenerCelo := listener.NewEVMListener(ethClientCelo, eventHandlerCelo, common.HexToAddress("0x62877dDCd49aD22f5eDfc6ac108e9a4b5D2bD88B"))
-	mhCelo := voter.NewEVMMessageHandler(ethClientCelo, common.HexToAddress("0x62877dDCd49aD22f5eDfc6ac108e9a4b5D2bD88B"))
-	mhCelo.RegisterMessageHandler(common.HexToAddress("0x3167776db165D8eA0f51790CA2bbf44Db5105ADF"), celoVoter.ERC20CeloMessageHandler)
-	evmVoterCelo := voter.NewVoter(mhCelo, ethClientCelo)
-	celoChain := evm.NewEVMChain(evmListenerCelo, evmVoterCelo, db, 2, &celoCfg.SharedEVMConfig)
-
-	r := relayer.NewRelayer([]relayer.RelayedChain{subChain, evmChain, celoChain})
+	// r := relayer.NewRelayer([]relayer.RelayedChain{evmChain, celoChain})
+	r := relayer.NewRelayer([]relayer.RelayedChain{evmChain, evmChain2})
 
 	go r.Start(stopChn, errChn)
 

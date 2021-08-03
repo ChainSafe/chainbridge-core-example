@@ -42,3 +42,6 @@ centrifuge-chain/
 /lvldbdata
 /client_configs
 chainbridge-core-example
+
+# kaleido
+kaleido_config.md
