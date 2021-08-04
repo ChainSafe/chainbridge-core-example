@@ -32,3 +32,9 @@ $CMD evm-cli  --gasLimit $GAS_LIMIT --gasPrice $GAS_PRICE deploy --erc20Handler 
 
 # register resource
 $CMD evm-cli  --gasLimit $GAS_LIMIT --gasPrice $GAS_PRICE bridge register-resource --url $KALEIDO_NODE_URL --resourceId $RESOURCE_ID --target $ERC20_HANDLER
+
+# register contract as mintable/burnable
+$CMD evm-cli --gasLimit $GAS_LIMIT --gasPrice $GAS_PRICE bridge set-burn --url $KALEIDO_NODE_URL --bridge $BRIDGE_ADDRESS --handler $ERC20_HANDLER --tokenContract $ERC20_ADDRESS
+
+# register handler as mintable
+$CMD evm-cli --gasLimit $GAS_LIMIT --gasPrice $GAS_PRICE erc20 add-minter --url $KALEIDO_NODE_URL --minter $ERC20_HANDLER
