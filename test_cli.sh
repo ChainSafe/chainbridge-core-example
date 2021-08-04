@@ -22,8 +22,11 @@ ERC721_CONTRACT=""
 GENERIC_HANDLER=""
 GENERIC_RESOURCE_ID="0000000000000000000000106C24dc2D480b5559C9E0e97bAaDf0750d9F0B800"
 
+RECIPIENT_ADDRESS="0x0"
+
 set -eux
 
+## bridge
 # deploy bridge
 $CMD evm-cli  --gasLimit $GAS_LIMIT --gasPrice $GAS_PRICE deploy --bridge --url $KALEIDO_NODE_URL
 
@@ -36,5 +39,12 @@ $CMD evm-cli  --gasLimit $GAS_LIMIT --gasPrice $GAS_PRICE bridge register-resour
 # register contract as mintable/burnable
 $CMD evm-cli --gasLimit $GAS_LIMIT --gasPrice $GAS_PRICE bridge set-burn --url $KALEIDO_NODE_URL --bridge $BRIDGE_ADDRESS --handler $ERC20_HANDLER --tokenContract $ERC20_ADDRESS
 
+## erc20
 # register handler as mintable
 $CMD evm-cli --gasLimit $GAS_LIMIT --gasPrice $GAS_PRICE erc20 add-minter --url $KALEIDO_NODE_URL --minter $ERC20_HANDLER --erc20Address $ERC20_ADDRESS
+
+# approve erc20
+$CMD evm-cli --gasLimit $GAS_LIMIT --gasPrice $GAS_PRICE erc20 approve  --url $KALEIDO_NODE_URL --erc20Address $ERC20_ADDRESS --recipient $RECIPIENT_ADDRESS --amount "1.11"  --decimals 2
+
+# mint erc20
+$CMD evm-cli --gasLimit $GAS_LIMIT --gasPrice $GAS_PRICE erc20 mint --url $KALEIDO_NODE_URL --amount "100" --erc20Address $ERC20_ADDRESS
