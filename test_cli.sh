@@ -26,15 +26,16 @@ RECIPIENT_ADDRESS="0x0"
 
 set -eux
 
-## bridge
+## deploy
 # deploy bridge
-$CMD evm-cli  --gasLimit $GAS_LIMIT --gasPrice $GAS_PRICE deploy --bridge --url $KALEIDO_NODE_URL
+$CMD evm-cli --gasLimit $GAS_LIMIT --gasPrice $GAS_PRICE deploy --bridge --url $KALEIDO_NODE_URL
 
 # deploy erc20 handler
-$CMD evm-cli  --gasLimit $GAS_LIMIT --gasPrice $GAS_PRICE deploy --erc20Handler --url $KALEIDO_NODE_URL --bridgeAddress $BRIDGE_ADDRESS
+$CMD evm-cli --gasLimit $GAS_LIMIT --gasPrice $GAS_PRICE deploy --erc20Handler --url $KALEIDO_NODE_URL --bridgeAddress $BRIDGE_ADDRESS
 
+## bridge
 # register resource
-$CMD evm-cli  --gasLimit $GAS_LIMIT --gasPrice $GAS_PRICE bridge register-resource --url $KALEIDO_NODE_URL --resourceId $RESOURCE_ID --target $ERC20_HANDLER
+$CMD evm-cli --gasLimit $GAS_LIMIT --gasPrice $GAS_PRICE bridge register-resource --url $KALEIDO_NODE_URL --resourceId $RESOURCE_ID --target $ERC20_HANDLER
 
 # register contract as mintable/burnable
 $CMD evm-cli --gasLimit $GAS_LIMIT --gasPrice $GAS_PRICE bridge set-burn --url $KALEIDO_NODE_URL --bridge $BRIDGE_ADDRESS --handler $ERC20_HANDLER --tokenContract $ERC20_ADDRESS
