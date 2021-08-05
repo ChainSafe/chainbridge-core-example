@@ -28,7 +28,10 @@ set -eux
 
 ## deploy
 # deploy bridge
-$CMD evm-cli --gasLimit $GAS_LIMIT --gasPrice $GAS_PRICE deploy --bridge --url $KALEIDO_NODE_URL
+$CMD evm-cli --gasLimit $GAS_LIMIT --gasPrice $GAS_PRICE deploy --bridge --url $KALEIDO_NODE_URL --relayerThreshold 1 --relayers="$RECIPIENT_ADDRESS,$RECIPIENT_ADDRESS,$RECIPIENT_ADDRESS"
+
+# deploy erc20
+$CMD evm-cli --gasLimit $GAS_LIMIT --gasPrice $GAS_PRICE deploy --erc20 --url $KALEIDO_NODE_URL --erc20Symbol "TKN" --erc20Name "token"
 
 # deploy erc20 handler
 $CMD evm-cli --gasLimit $GAS_LIMIT --gasPrice $GAS_PRICE deploy --erc20Handler --url $KALEIDO_NODE_URL --bridgeAddress $BRIDGE_ADDRESS
@@ -45,7 +48,7 @@ $CMD evm-cli --gasLimit $GAS_LIMIT --gasPrice $GAS_PRICE bridge set-burn --url $
 $CMD evm-cli --gasLimit $GAS_LIMIT --gasPrice $GAS_PRICE erc20 add-minter --url $KALEIDO_NODE_URL --minter $ERC20_HANDLER --erc20Address $ERC20_ADDRESS
 
 # approve erc20
-$CMD evm-cli --gasLimit $GAS_LIMIT --gasPrice $GAS_PRICE erc20 approve  --url $KALEIDO_NODE_URL --erc20Address $ERC20_ADDRESS --recipient $RECIPIENT_ADDRESS --amount "1.11"  --decimals 2
+$CMD evm-cli --gasLimit $GAS_LIMIT --gasPrice $GAS_PRICE erc20 approve --url $KALEIDO_NODE_URL --erc20Address $ERC20_ADDRESS --recipient $RECIPIENT_ADDRESS --amount "1.11"  --decimals 2
 
 # mint erc20
 $CMD evm-cli --gasLimit $GAS_LIMIT --gasPrice $GAS_PRICE erc20 mint --url $KALEIDO_NODE_URL --amount "100" --erc20Address $ERC20_ADDRESS
