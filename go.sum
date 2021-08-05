@@ -56,15 +56,8 @@ github.com/Azure/go-autorest/logger v0.1.0/go.mod h1:oExouG+K6PryycPJfVSxi/koC6L
 github.com/Azure/go-autorest/tracing v0.5.0/go.mod h1:r/s2XiOKccPW3HrqB+W0TQzfbtp2fGCgRFtBroKn4Dk=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
-github.com/ChainSafe/chainbridge-celo-module v0.0.0-20210702092144-957c6185d362 h1:vIOibp3x401T+mZAPyvWW2FIhWeJB+3v46S/8lGvm4U=
-github.com/ChainSafe/chainbridge-celo-module v0.0.0-20210702092144-957c6185d362/go.mod h1:gorgs4+Auja4dCZse2gurYGNnoHLA9MmtF3WzY1kLys=
 github.com/ChainSafe/chainbridge-celo-module v0.0.0-20210805091055-68700289e998 h1:MSuEFe3laMHvkOTtyMWN2/vJA5RV8ULcWHr8q1nhNWo=
 github.com/ChainSafe/chainbridge-celo-module v0.0.0-20210805091055-68700289e998/go.mod h1:XFG+SgpTU0z4zZmqkr4iHfJmRrvd/amCyvQ1Dr/Od+g=
-github.com/ChainSafe/chainbridge-core v0.0.0-20210702085934-c073bc8c16a4/go.mod h1:CiWVgimatRcccBEVvNrHsRMvU/aRH7j/S7YTSDie4BQ=
-github.com/ChainSafe/chainbridge-core v0.0.0-20210712095225-dd3876a066e4 h1:gWvzndGu1sZdcWZgeaU+WjRXkIiuEVXftfkYjpmfx6k=
-github.com/ChainSafe/chainbridge-core v0.0.0-20210712095225-dd3876a066e4/go.mod h1:3Jc5kHphZrXC+tC2wdOcnHeNGTG/99GUVUthnZar9jc=
-github.com/ChainSafe/chainbridge-core v0.0.0-20210804101411-6e069815c674 h1:Z1b1heMYoyNYw8M5xDBMMdJ+0Cpy6NO3SyogOggqbPE=
-github.com/ChainSafe/chainbridge-core v0.0.0-20210804101411-6e069815c674/go.mod h1:ORqRWZ0mjGdVuroCFQVCGYJ0G5w/okKsSnT6mse0a78=
 github.com/DATA-DOG/go-sqlmock v1.3.3/go.mod h1:f/Ixk793poVmq4qj/V1dPUg2JEAKC73Q5eFN3EC/SaM=
 github.com/OneOfOne/xxhash v1.2.2/go.mod h1:HSdplMjZKSmBqAxg5vPj2TmRDmfkzw+cTzAElWljhcU=
 github.com/StackExchange/wmi v0.0.0-20180116203802-5d049714c4a6 h1:fLjPD/aNc3UIOA6tDi6QXUemppXK3P9BI7mr2hd6gx8=
@@ -710,8 +703,6 @@ golang.org/x/sys v0.0.0-20210615035016-665e8c7367d1 h1:SrN+KX8Art/Sf4HNj6Zcz06G7
 golang.org/x/sys v0.0.0-20210615035016-665e8c7367d1/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1 h1:v+OssWQX+hTHEmOBgwxdZxK4zHq3yOs8F9J7mk0PY8E=
 golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
-golang.org/x/term v0.0.0-20210615171337-6886f2dfbf5b h1:9zKuko04nR4gjZ4+DNjHqRlAJqbJETHwiNKDqTfOjfE=
-golang.org/x/term v0.0.0-20210615171337-6886f2dfbf5b/go.mod h1:jbD1KX2456YbFQfuXm/mYQcufACuNUgVhRMnK/tPxf8=
 golang.org/x/text v0.0.0-20170915032832-14c0d48ead0c/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
 golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
 golang.org/x/text v0.3.1-0.20180807135948-17ff2d5776d2/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=

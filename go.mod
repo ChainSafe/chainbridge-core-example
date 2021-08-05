@@ -2,7 +2,6 @@ module github.com/ChainSafe/chainbridge-core-example
 
 go 1.15
 
-replace github.com/ChainSafe/chainbridge-celo-module => ../chainbridge-celo-module
 replace github.com/ChainSafe/chainbridge-core => ../chainbridge-core
 
 require (
