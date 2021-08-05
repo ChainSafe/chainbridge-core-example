@@ -8,6 +8,7 @@ import (
 	"github.com/ChainSafe/chainbridge-core-example/example/keystore"
 	"github.com/ChainSafe/chainbridge-core/chains/evm"
 	"github.com/ChainSafe/chainbridge-core/chains/evm/evmclient"
+	"github.com/ChainSafe/chainbridge-core/chains/evm/evmtransaction"
 	"github.com/ChainSafe/chainbridge-core/chains/evm/listener"
 	"github.com/ChainSafe/chainbridge-core/chains/evm/voter"
 
@@ -61,7 +62,10 @@ func Run() error {
 	evmListener := listener.NewEVMListener(ethClient, eventHandler, common.HexToAddress(ethCfg.SharedEVMConfig.Bridge))
 	mh := voter.NewEVMMessageHandler(ethClient, common.HexToAddress(ethCfg.SharedEVMConfig.Bridge))
 	mh.RegisterMessageHandler(common.HexToAddress(ethCfg.SharedEVMConfig.Erc20Handler), voter.ERC20MessageHandler)
-	evmVoter := voter.NewVoter(mh, ethClient)
+
+	txFabric := evmtransaction.NewTransaction
+
+	evmVoter := voter.NewVoter(mh, ethClient, txFabric)
 	evmChain := evm.NewEVMChain(evmListener, evmVoter, db, *ethCfg.SharedEVMConfig.GeneralChainConfig.Id, &ethCfg.SharedEVMConfig)
 	// subC := subModule.NewSubstrateClient(stopChn)
 	// err = subC.Configurate(viper.GetString(config.ConfigFlagName), "subConfig")
@@ -91,7 +95,7 @@ func Run() error {
 	evmListener2 := listener.NewEVMListener(ethClient2, eventHandler2, common.HexToAddress(ethCfg.SharedEVMConfig.Bridge))
 	mh2 := voter.NewEVMMessageHandler(ethClient2, common.HexToAddress(ethCfg.SharedEVMConfig.Bridge))
 	mh.RegisterMessageHandler(common.HexToAddress(ethCfg.SharedEVMConfig.Erc20Handler), voter.ERC20MessageHandler)
-	evmVoter2 := voter.NewVoter(mh2, ethClient2)
+	evmVoter2 := voter.NewVoter(mh2, ethClient2, txFabric)
 	evmChain2 := evm.NewEVMChain(evmListener2, evmVoter2, db, *ethCfg.SharedEVMConfig.GeneralChainConfig.Id, &ethCfg.SharedEVMConfig)
 
 	// // Celo setup
