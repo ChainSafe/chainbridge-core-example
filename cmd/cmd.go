@@ -6,7 +6,7 @@ package cmd
 import (
 	cCLI "github.com/ChainSafe/chainbridge-celo-module/cli"
 	"github.com/ChainSafe/chainbridge-core-example/example"
-	"github.com/ChainSafe/chainbridge-core/chains/evm/cli"
+	evmCLI "github.com/ChainSafe/chainbridge-core/chains/evm/cli"
 	"github.com/ChainSafe/chainbridge-core/config"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
@@ -34,7 +34,7 @@ func init() {
 }
 
 func Execute() {
-	rootCMD.AddCommand(runCMD, cCLI.CeloRootCLI, cli.EvmRootCLI)
+	rootCMD.AddCommand(runCMD, cCLI.CeloRootCLI, evmCLI.EvmRootCLI)
 	if err := rootCMD.Execute(); err != nil {
 		log.Fatal().Err(err).Msg("failed to execute root cmd")
 	}

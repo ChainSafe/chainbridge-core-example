@@ -56,7 +56,6 @@ func Run() error {
 		panic(err)
 	}
 	evmConfig := evmClient.GetConfig()
-
 	eventHandlerEVM := listener.NewETHEventHandler(common.HexToAddress(evmConfig.SharedEVMConfig.Bridge), evmClient)
 	eventHandlerEVM.RegisterEventHandler(evmConfig.SharedEVMConfig.Erc20Handler, listener.Erc20EventHandler)
 	evmListener := listener.NewEVMListener(evmClient, eventHandlerEVM, common.HexToAddress(evmConfig.SharedEVMConfig.Bridge))
