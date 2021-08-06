@@ -117,46 +117,6 @@ func Deploy(c *evmclient.EVMClient, chainID uint8, treshHold *big.Int) (common.A
 	return bridgeAdrr, erc20Addr, erc20HandlerAddr, nil
 }
 
-func deployContract(client ChainClient, abi abi.ABI, bytecode []byte, params ...interface{}) (common.Address, error) {
-	gp, err := client.GasPrice()
-	if err != nil {
-		return common.Address{}, err
-	}
-	client.LockNonce()
-	n, err := client.UnsafeNonce()
-	if err != nil {
-		return common.Address{}, err
-	}
-	input, err := abi.Pack("", params...)
-	if err != nil {
-		return common.Address{}, err
-	}
-	tx := transaction.NewCeloTransaction(n.Uint64(), nil, big.NewInt(0), DefaultGasLimit, gp, append(bytecode, input...))
-	hash, err := client.SignAndSendTransaction(context.TODO(), tx)
-	if err != nil {
-		return common.Address{}, err
-	}
-	time.Sleep(2 * time.Second)
-	_, err = client.WaitAndReturnTxReceipt(tx.Hash())
-	if err != nil {
-		return common.Address{}, err
-	}
-	log.Debug().Str("hash", hash.String()).Uint64("nonce", n.Uint64()).Msgf("Contract deployed")
-	address := crypto.CreateAddress(client.From(), n.Uint64())
-	err = client.UnsafeIncreaseNonce()
-	if err != nil {
-		return common.Address{}, err
-	}
-	client.UnlockNonce()
-	if code, err := client.CodeAt(context.Background(), address, nil); err != nil {
-		return common.Address{}, err
-	} else if len(code) == 0 {
-		return common.Address{}, errors.New(fmt.Sprintf("no code at provided address %s", address.String()))
-	}
-
-	return address, nil
-}
-
 func deployErc20(c *evmclient.EVMClient, name, symbol string) (common.Address, error) {
 	parsed, err := abi.JSON(strings.NewReader(ERC20PresetMinterPauserABI))
 	if err != nil {
@@ -213,6 +173,45 @@ func ToCallArg(msg ethereum.CallMsg) map[string]interface{} {
 	return arg
 }
 
+func deployContract(client ChainClient, abi abi.ABI, bytecode []byte, params ...interface{}) (common.Address, error) {
+	gp, err := client.GasPrice()
+	if err != nil {
+		return common.Address{}, err
+	}
+	client.LockNonce()
+	n, err := client.UnsafeNonce()
+	if err != nil {
+		return common.Address{}, err
+	}
+	input, err := abi.Pack("", params...)
+	if err != nil {
+		return common.Address{}, err
+	}
+	tx := transaction.NewCeloTransaction(n.Uint64(), nil, big.NewInt(0), DefaultGasLimit, gp, append(bytecode, input...))
+	hash, err := client.SignAndSendTransaction(context.TODO(), tx)
+	if err != nil {
+		return common.Address{}, err
+	}
+	time.Sleep(2 * time.Second)
+	_, err = client.WaitAndReturnTxReceipt(tx.Hash())
+	if err != nil {
+		return common.Address{}, err
+	}
+	log.Debug().Str("hash", hash.String()).Uint64("nonce", n.Uint64()).Msgf("Contract deployed")
+	address := crypto.CreateAddress(client.From(), n.Uint64())
+	err = client.UnsafeIncreaseNonce()
+	if err != nil {
+		return common.Address{}, err
+	}
+	client.UnlockNonce()
+	if code, err := client.CodeAt(context.Background(), address, nil); err != nil {
+		return common.Address{}, err
+	} else if len(code) == 0 {
+		return common.Address{}, errors.New(fmt.Sprintf("no code at provided address %s", address.String()))
+	}
+
+	return address, nil
+}
 func transact(client ChainClient, to *common.Address, data []byte, gasLimit uint64) (common.Hash, error) {
 	gp, err := client.GasPrice()
 	if err != nil {

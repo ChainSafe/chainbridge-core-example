@@ -15,7 +15,7 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-const TestEndpoint = "ws://localhost:8545"
+const TestEndpoint = "ws://localhost:8546"
 const TestEndpoint2 = "ws://localhost:8547"
 
 type IntegrationTestSuite struct {
@@ -30,15 +30,16 @@ type IntegrationTestSuite struct {
 func TestRunE2ETests(t *testing.T) {
 	suite.Run(t, new(IntegrationTestSuite))
 }
+
 func (s *IntegrationTestSuite) SetupSuite()    {}
 func (s *IntegrationTestSuite) TearDownSuite() {}
 
 func (s *IntegrationTestSuite) SetupTest() {
-	ethClient, err := evmclient.NewEVMClientFromParams(TestEndpoint, e2e.AliceKp.PrivateKey())
+	ethClient, err := evmclient.NewEVMClientFromParams(TestEndpoint, e2e.AliceKp.PrivateKey(), big.NewInt(e2e.DefaultMaxGasPrice))
 	if err != nil {
 		panic(err)
 	}
-	ethClient2, err := evmclient.NewEVMClientFromParams(TestEndpoint2, e2e.AliceKp.PrivateKey())
+	ethClient2, err := evmclient.NewEVMClientFromParams(TestEndpoint2, e2e.AliceKp.PrivateKey(), big.NewInt(e2e.DefaultMaxGasPrice))
 	if err != nil {
 		panic(err)
 	}

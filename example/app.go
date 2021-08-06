@@ -8,6 +8,8 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/ChainSafe/chainbridge-core/chains/evm/evmtransaction"
+
 	"github.com/ChainSafe/chainbridge-celo-module/transaction"
 
 	"github.com/ChainSafe/chainbridge-core/chains/evm"
@@ -33,7 +35,7 @@ func Run() error {
 
 	// CELO1 setup
 	celo1Client := evmclient.NewEVMClient()
-	err = celo1Client.Configurate(viper.GetString(config.ConfigFlagName), "config_celo1.json")
+	err = celo1Client.Configurate(viper.GetString(config.ConfigFlagName), "config_celo.json")
 	if err != nil {
 		panic(err)
 	}
@@ -47,23 +49,23 @@ func Run() error {
 	celoVoter1 := voter.NewVoter(mh, celo1Client, transaction.NewCeloTransaction)
 	celoChain1 := evm.NewEVMChain(celoListener1, celoVoter1, db, *celo1Cfg.SharedEVMConfig.GeneralChainConfig.Id, &celo1Cfg.SharedEVMConfig)
 
-	//// CELO2 setup
-	celoClient2 := evmclient.NewEVMClient()
-	err = celoClient2.Configurate(viper.GetString(config.ConfigFlagName), "config_celo2.json")
+	////EVM setup
+	evmClient := evmclient.NewEVMClient()
+	err = evmClient.Configurate(viper.GetString(config.ConfigFlagName), "config_evm.json")
 	if err != nil {
 		panic(err)
 	}
-	celoConfig2 := celoClient2.GetConfig()
+	evmConfig := evmClient.GetConfig()
 
-	eventHandlerCelo2 := listener.NewETHEventHandler(common.HexToAddress(celoConfig2.SharedEVMConfig.Bridge), celoClient2)
-	eventHandlerCelo2.RegisterEventHandler(celoConfig2.SharedEVMConfig.Erc20Handler, listener.Erc20EventHandler)
-	goerliListener := listener.NewEVMListener(celoClient2, eventHandlerCelo2, common.HexToAddress(celoConfig2.SharedEVMConfig.Bridge))
-	mhCelo2 := voter.NewEVMMessageHandler(celoClient2, common.HexToAddress(celoConfig2.SharedEVMConfig.Bridge))
-	mhCelo2.RegisterMessageHandler(common.HexToAddress(celoConfig2.SharedEVMConfig.Erc20Handler), voter.ERC20MessageHandler)
-	celoVoter2 := voter.NewVoter(mhCelo2, celoClient2, transaction.NewCeloTransaction)
-	celoChain2 := evm.NewEVMChain(goerliListener, celoVoter2, db, *celoConfig2.SharedEVMConfig.GeneralChainConfig.Id, &celoConfig2.SharedEVMConfig)
+	eventHandlerEVM := listener.NewETHEventHandler(common.HexToAddress(evmConfig.SharedEVMConfig.Bridge), evmClient)
+	eventHandlerEVM.RegisterEventHandler(evmConfig.SharedEVMConfig.Erc20Handler, listener.Erc20EventHandler)
+	evmListener := listener.NewEVMListener(evmClient, eventHandlerEVM, common.HexToAddress(evmConfig.SharedEVMConfig.Bridge))
+	mhEVM := voter.NewEVMMessageHandler(evmClient, common.HexToAddress(evmConfig.SharedEVMConfig.Bridge))
+	mhEVM.RegisterMessageHandler(common.HexToAddress(evmConfig.SharedEVMConfig.Erc20Handler), voter.ERC20MessageHandler)
+	evmVoter := voter.NewVoter(mhEVM, evmClient, evmtransaction.NewTransaction)
+	evmChain := evm.NewEVMChain(evmListener, evmVoter, db, *evmConfig.SharedEVMConfig.GeneralChainConfig.Id, &evmConfig.SharedEVMConfig)
 
-	r := relayer.NewRelayer([]relayer.RelayedChain{celoChain1, celoChain2})
+	r := relayer.NewRelayer([]relayer.RelayedChain{celoChain1, evmChain})
 
 	go r.Start(stopChn, errChn)
 
