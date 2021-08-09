@@ -1,3 +1,6 @@
+# Copyright 2021 ChainSafe Systems
+# SPDX-License-Identifier: LGPL-3.0-only
+
 global:
   scrape_interval:     10s
   evaluation_interval: 10s
