@@ -2,6 +2,7 @@ module github.com/ChainSafe/chainbridge-core-example
 
 go 1.15
 
+
 require (
 	github.com/ChainSafe/chainbridge-celo-module v0.0.0-20210806201728-33eec17d6b8e
 	github.com/ChainSafe/chainbridge-core v0.0.0-20210806201337-c0255bae3993

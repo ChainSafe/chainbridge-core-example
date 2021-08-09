@@ -40,7 +40,6 @@ func Run() error {
 		panic(err)
 	}
 	celo1Cfg := celo1Client.GetConfig()
-
 	eventHandler := listener.NewETHEventHandler(common.HexToAddress(celo1Cfg.SharedEVMConfig.Bridge), celo1Client)
 	eventHandler.RegisterEventHandler(celo1Cfg.SharedEVMConfig.Erc20Handler, listener.Erc20EventHandler)
 	celoListener1 := listener.NewEVMListener(celo1Client, eventHandler, common.HexToAddress(celo1Cfg.SharedEVMConfig.Bridge))
