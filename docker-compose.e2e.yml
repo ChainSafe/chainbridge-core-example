@@ -97,7 +97,7 @@ services:
       - NETWORKID=444
 
   relayer:
-    image: "chainsafe/chainbridge-core-example-celo"
+    image: "chainsafe/chainbridge-core-example:evm-celo-dev"
     container_name: "evm-celo-relayer"
     command: run --config /cfg/config-celo-int-tst.json --testkey alice --fresh --leveldb ./lvldb
     volumes:
