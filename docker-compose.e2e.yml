@@ -96,20 +96,14 @@ services:
       - DATADIR=celo-dump3
       - NETWORKID=444
 
-#  relayerA:
-#    image: "chainsafe/chainbridge-core-example-celo"
-#    container_name: "example-celo1"
-#    command: run --config /cfg/config-celo-int-tst.json --testkey alice --fresh --leveldb ./lvldb
-#    volumes:
-#      - ./e2e/keys:/keys
-#      - ./e2e/cfg:/cfg
-#
-#  relayerB:
-#    image: "chainsafe/chainbridge-core-example-celo"
-#    container_name: "example-celo2"
-#    command: run --config /cfg/config-celo-int-tst.json --testkey alice --fresh --leveldb ./lvldb
-#    volumes:
-#      - ./e2e/cfg:/cfg
+  relayer:
+    image: "chainsafe/chainbridge-core-example-celo"
+    container_name: "evm-celo-relayer"
+    command: run --config /cfg/config-celo-int-tst.json --testkey alice --fresh --leveldb ./lvldb
+    volumes:
+      - ./e2e/keys:/keys
+      - ./e2e/cfg:/cfg
+
 
 networks:
   celo1:

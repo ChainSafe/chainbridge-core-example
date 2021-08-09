@@ -6,7 +6,7 @@ name: Docker build and push
 on:
   push:
     branches:
-    # when main branch receives a push
+    # when any if these branches receives a push
       - main
       - kovan-gorli-dev
       - evm-celo-dev
