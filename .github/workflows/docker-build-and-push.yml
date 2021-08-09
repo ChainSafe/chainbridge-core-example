@@ -9,6 +9,7 @@ on:
     # when main branch receives a push
       - main
       - kovan-gorli-dev
+      - evm-celo-dev
     # when any of these versions receive a push
     tags:
       - "v*.*.*"
