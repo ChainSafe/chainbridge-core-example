@@ -13,10 +13,10 @@ import (
 )
 
 var (
-	rootCMD = &cobra.Command{
+	rootCmd = &cobra.Command{
 		Use: "",
 	}
-	runCMD = &cobra.Command{
+	runCmd = &cobra.Command{
 		Use:   "run",
 		Short: "Run example app",
 		Long:  "Run example app",
@@ -30,12 +30,12 @@ var (
 )
 
 func init() {
-	config.BindFlags(runCMD)
+	config.BindFlags(runCmd)
 }
 
 func Execute() {
-	rootCMD.AddCommand(runCMD, cCLI.CeloRootCLI, evmCLI.EvmRootCLI)
-	if err := rootCMD.Execute(); err != nil {
+	rootCmd.AddCommand(runCmd, cCLI.CeloRootCLI, evmCLI.EvmRootCLI)
+	if err := rootCmd.Execute(); err != nil {
 		log.Fatal().Err(err).Msg("failed to execute root cmd")
 	}
 }

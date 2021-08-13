@@ -14,7 +14,6 @@ import (
 
 	"github.com/ChainSafe/chainbridge-core/chains/evm"
 	"github.com/ChainSafe/chainbridge-core/chains/evm/evmclient"
-	"github.com/ChainSafe/chainbridge-core/chains/evm/evmtransaction"
 	"github.com/ChainSafe/chainbridge-core/chains/evm/listener"
 	"github.com/ChainSafe/chainbridge-core/chains/evm/voter"
 	"github.com/ChainSafe/chainbridge-core/config"
