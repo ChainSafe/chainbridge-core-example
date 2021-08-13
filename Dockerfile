@@ -5,7 +5,7 @@ FROM  golang:1.16-stretch AS builder
 ADD . /src
 WORKDIR /src
 RUN go mod download
-RUN make build
+RUN go build -o /bridge .
 
 # # final stage
 FROM debian:stretch-slim

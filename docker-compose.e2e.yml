@@ -1,0 +1,110 @@
+# Copyright 2020 ChainSafe Systems
+# SPDX-License-Identifier: LGPL-3.0-only
+version: '3'
+
+services:
+  celo1-1:
+    image: "chainsafe/chainbridge-bootstrapped-celo:v1.0.0"
+    networks:
+      - celo1
+    container_name: celo1-1
+    ports:
+      - "8545:8545"
+      - "8546:8546"
+    environment:
+      - NODEKEY=98ab333347a12cef869f92b3de44085f9e44891e513bcf1d76a99eecbcdd5e17
+      - DATADIR=celo-dump1
+      - NETWORKID=333
+    #      - BOOTNODE=enode://47eccabfa6fa81f7ae7d8c094485fd521789e22e529916a2409970b6e99b1d1b6c590ad71bd08f182071313b2e03d319f4f6b625b28b6ab7768bb2de3f2a6eed@celo1-2:30303
+
+  celo1-2:
+    image: "chainsafe/chainbridge-bootstrapped-celo:v1.0.0"
+    networks:
+      - celo1
+    container_name: celo1-2
+    ports:
+      - "8645:8545"
+      - "8646:8546"
+    depends_on:
+      - celo1-1
+    environment:
+      - ACCOUNTS=0xff93B45308FD417dF303D6515aB04D9e89a750Ca
+      - BOOTNODE=enode://47eccabfa6fa81f7ae7d8c094485fd521789e22e529916a2409970b6e99b1d1b6c590ad71bd08f182071313b2e03d319f4f6b625b28b6ab7768bb2de3f2a6eed@celo1-1:30303
+      - DATADIR=celo-dump2
+      - NETWORKID=333
+
+  celo1-3:
+    image: "chainsafe/chainbridge-bootstrapped-celo:v1.0.0"
+    networks:
+      - celo1
+    container_name: celo1-3
+    ports:
+      - "8745:8545"
+      - "8746:8546"
+    depends_on:
+      - celo1-1
+    environment:
+      - ACCOUNTS=0x8e0a907331554AF72563Bd8D43051C2E64Be5d35
+      - BOOTNODE=enode://47eccabfa6fa81f7ae7d8c094485fd521789e22e529916a2409970b6e99b1d1b6c590ad71bd08f182071313b2e03d319f4f6b625b28b6ab7768bb2de3f2a6eed@celo1-1:30303
+      - DATADIR=celo-dump3
+      - NETWORKID=333
+
+  # SECOND CHAIN
+  celo2-1:
+    image: "chainsafe/chainbridge-bootstrapped-celo:v1.0.0"
+    networks:
+      - celo2
+    container_name: celo2-1
+    ports:
+      - "8547:8545"
+      - "8548:8546"
+    environment:
+      - NODEKEY=98ab333347a12cef869f92b3de44085f9e44891e513bcf1d76a99eecbcdd5e17
+      - DATADIR=celo-dump1
+      - NETWORKID=444
+  #      - BOOTNODE=enode://47eccabfa6fa81f7ae7d8c094485fd521789e22e529916a2409970b6e99b1d1b6c590ad71bd08f182071313b2e03d319f4f6b625b28b6ab7768bb2de3f2a6eed@celo2-2:30303
+
+  celo2-2:
+    image: "chainsafe/chainbridge-bootstrapped-celo:v1.0.0"
+    networks:
+      - celo2
+    container_name: celo2-2
+    ports:
+      - "8647:8545"
+      - "8648:8546"
+    depends_on:
+      - celo2-1
+    environment:
+      - ACCOUNTS=0xff93B45308FD417dF303D6515aB04D9e89a750Ca
+      - BOOTNODE=enode://47eccabfa6fa81f7ae7d8c094485fd521789e22e529916a2409970b6e99b1d1b6c590ad71bd08f182071313b2e03d319f4f6b625b28b6ab7768bb2de3f2a6eed@celo2-1:30303
+      - DATADIR=celo-dump2
+      - NETWORKID=444
+
+  celo2-3:
+    image: "chainsafe/chainbridge-bootstrapped-celo:v1.0.0"
+    networks:
+      - celo2
+    container_name: celo2-3
+    ports:
+      - "8747:8545"
+      - "8748:8546"
+    depends_on:
+      - celo2-1
+    environment:
+      - ACCOUNTS=0x8e0a907331554AF72563Bd8D43051C2E64Be5d35
+      - BOOTNODE=enode://47eccabfa6fa81f7ae7d8c094485fd521789e22e529916a2409970b6e99b1d1b6c590ad71bd08f182071313b2e03d319f4f6b625b28b6ab7768bb2de3f2a6eed@celo2-1:30303
+      - DATADIR=celo-dump3
+      - NETWORKID=444
+
+  relayer:
+    image: "chainsafe/chainbridge-core-example:evm-celo-dev"
+    container_name: "evm-celo-relayer"
+    command: run --config /cfg/config-celo-int-tst.json --testkey alice --fresh --leveldb ./lvldb
+    volumes:
+      - ./e2e/keys:/keys
+      - ./e2e/cfg:/cfg
+
+
+networks:
+  celo1:
+  celo2:
