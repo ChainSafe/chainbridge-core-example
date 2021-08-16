@@ -42,3 +42,4 @@ centrifuge-chain/
 /lvldbdata
 /client_configs
 chainbridge-core-example
+dist/
