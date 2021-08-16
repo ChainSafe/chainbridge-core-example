@@ -43,3 +43,4 @@ centrifuge-chain/
 /keys
 /client_configs
 chainbridge-core-example
+dist/
