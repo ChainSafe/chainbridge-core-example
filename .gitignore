@@ -43,6 +43,4 @@ centrifuge-chain/
 /keys
 /client_configs
 chainbridge-core-example
-
-# kaleido
-kaleido_config.md
+dist/
