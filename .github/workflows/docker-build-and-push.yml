@@ -21,6 +21,7 @@ jobs:
   build-and-deploy:
     name: Docker Deployment
     runs-on: ubuntu-latest
+    environment: production
     # requires these jobs to run first
     # if check not passed, job will be skipped
     if: github.ref == 'refs/heads/main' || contains(github.ref, '/tags/v')
