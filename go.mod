@@ -1,12 +1,15 @@
-module github.com/waymobetta/chainbridge-core-example
+module github.com/ChainSafe/chainbridge-core-example
 
-go 1.16
+go 1.15
+
+replace github.com/ChainSafe/chainbridge-core => ../chainbridge-core
+
+replace github.com/ChainSafe/chainbridge-celo-module => ../chainbridge-celo-module
 
 require (
 	github.com/ChainSafe/chainbridge-celo-module v0.0.0-20210812101441-b6d7ad422a53
-	github.com/ChainSafe/chainbridge-core v0.0.0-20210817110004-2370720632d2
-	github.com/ChainSafe/chainbridge-core-example v0.0.1
-	github.com/ethereum/go-ethereum v1.10.7
+	github.com/ChainSafe/chainbridge-core v0.0.0-20210812200838-f402b6e02465
+	github.com/ethereum/go-ethereum v1.10.8
 	github.com/rs/zerolog v1.23.0
 	github.com/spf13/cobra v1.2.1
 	github.com/spf13/viper v1.8.1

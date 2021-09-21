@@ -1,7 +1,7 @@
 {
-  "name": "celo1",
+  "name": "celo",
   "id": "1",
-  "endpoint": "ws://localhost:8545",
+  "endpoint": "http://celo1:8546",
   "from": "0xff93B45308FD417dF303D6515aB04D9e89a750Ca",
   "bridge": "0x7aEB732252fD6D23AE1afa83fC22ed3991F72012",
   "erc20Handler": "0x7d894cb82544DC7e9c90E1CB8182b7f6fC2b5D88",
