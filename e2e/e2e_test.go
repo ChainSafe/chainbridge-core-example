@@ -9,9 +9,8 @@ import (
 
 	"github.com/ChainSafe/chainbridge-celo-module/transaction"
 	"github.com/ChainSafe/chainbridge-core/chains/evm/evmtransaction"
-	"github.com/stretchr/testify/suite"
-
 	"github.com/ChainSafe/chainbridge-core/e2e/evm"
+	"github.com/stretchr/testify/suite"
 )
 
 const ETHEndpoint = "http://localhost:8845"
