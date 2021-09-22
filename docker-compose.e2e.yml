@@ -103,8 +103,11 @@ services:
     entrypoint: "/root/entrypoint.sh"
 
   relayer:
-    image: "chainsafe/chainbridge-core-example:evm-celo-dev"
-    container_name: "evm-celo-relayer"
+    build:
+      context: .
+      dockerfile: Dockerfile
+#    image: "chainsafe/chainbridge-core-example:evm-celo-dev"
+    container_name: "relayer"
     command: run --config /cfg --testkey alice --fresh
     depends_on:
       - evm3
