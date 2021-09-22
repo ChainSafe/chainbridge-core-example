@@ -42,6 +42,8 @@ else
 fi
 
 exec geth \
+  --unlock ${ACCOUNTS} \
+  --password /root/password.txt \
   --ws \
   --ws.port 8546 \
   --ws.origins="*" \
