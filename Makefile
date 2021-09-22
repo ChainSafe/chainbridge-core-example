@@ -16,3 +16,6 @@ license-check:
 build:
 	@echo "  >  \033[32mBuilding binary...\033[0m "
 	GOARCH=amd64 go build
+
+e2e-test:
+	./scripts/int_tests.sh
