@@ -745,6 +745,35 @@ Flags:
   -h, --help                  help for mint
 ```
 
+#### Run
+Run the actual chainbridge relayer.
+
+```bash
+Run example app
+
+Usage:
+   run [flags]
+
+Flags:
+      --blockstore string   Specify path for blockstore (default "./lvldbdata")
+      --config string       Path to JSON configuration files directory (default ".")
+      --fresh               Disables loading from blockstore at start. Opts will still be used if specified. (default: false)
+  -h, --help                help for run
+      --keystore string     Path to keystore directory (default "./keys")
+      --latest              Overrides blockstore and start block, starts from latest block (default: false)
+      --testkey string      Applies a predetermined test keystore to the chains.
+```
+
+*run*
+Running the relayer with the following flags:
+1. Path to our chain configurations: JSON config file(s) stored within a directory called configs.
+2. Path to our relayer's keystore: an ethereum keypair used for signing transactions.
+3. Path to our blockstore: used to record the last block the relayer processed, allowing the relayer to pick up where it left off.
+
+```bash
+run --config configs --keystore keys --blockstore blockstore
+```
+
 # ChainSafe Security Policy
 
 ## Reporting a Security Bug
