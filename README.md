@@ -39,8 +39,25 @@ Global Flags:
       --url string                  node url (default "ws://localhost:8545")
 ```
 
-#### EVM-CLI
+### EVM-CLI
 This module provides instruction for communicating with EVM-compatible chains.
+
+```bash
+Usage:
+   evm-cli [command]
+
+Available Commands:
+  accounts    Account instructions
+  admin       Admin-related instructions
+  bridge      Bridge-related instructions
+  deploy      Deploy smart contracts
+  erc20       ERC20-related instructions
+  erc721      ERC721-related instructions
+  utils       Utils-related instructions
+
+Flags:
+  -h, --help   help for evm-cli
+```
 
 #### Accounts
 Account instructions, allowing us to generate keypairs or import existing keypairs for use.
@@ -535,8 +552,198 @@ Flags:
       --txHash string        transaction hash
 ```
 
-#### Celo-CLI
+### Celo-CLI
 Though Celo is an EVM-compatible chain, it deviates in its implementation of the original Ethereum specifications, and therefore is deserving of its own separate module.
+
+```bash
+Root command for starting Celo CLI
+
+Usage:
+   celo-cli [command]
+
+Available Commands:
+  bridge      Bridge-related instructions
+  deploy      Deploy smart contracts
+  erc20       erc20-related instructions
+
+Flags:
+  -h, --help   help for celo-cli
+```
+
+#### Bridge
+Bridge-related instructions.
+
+```bash
+Usage:
+   celo-cli bridge [command]
+
+Available Commands:
+  register-resource Register a resource ID
+  set-burn          Set a token contract as mintable/burnable
+
+Flags:
+  -h, --help   help for bridge
+```
+
+*register-resource*
+Register a resource ID with a contract address for a handler
+
+```bash
+Usage:
+   celo-cli bridge register-resource [flags]
+
+Flags:
+      --bridge string       bridge contract address
+      --handler string      handler contract address
+  -h, --help                help for register-resource
+      --resourceId string   resource ID to be registered
+      --target string       contract address to be registered
+```
+
+*set-burn*
+Set a token contract as mintable/burnable in a handler
+
+```bash
+Usage:
+   celo-cli bridge set-burn [flags]
+
+Flags:
+      --bridge string          bridge contract address
+      --handler string         ERC20 handler contract address
+  -h, --help                   help for set-burn
+      --tokenContract string   token contract to be registered
+```
+
+#### Deploy
+Deploy smart contracts.
+
+This command can be used to deploy all or some of the contracts required for bridging. Selection of contracts can be made by either specifying --all or a subset of flags.
+
+```bash
+Usage:
+   celo-cli deploy [flags]
+
+Flags:
+      --all                     deploy all
+      --bridge                  deploy bridge
+      --bridgeAddress string    bridge contract address. Should be provided if handlers are deployed separately
+      --chainId string          chain ID for the instance (default "1")
+      --erc20                   deploy ERC20
+      --erc20Handler            deploy ERC20 handler
+      --erc20Name string        ERC20 contract name
+      --erc20Symbol string      ERC20 contract symbol
+      --erc721                  deploy ERC721
+      --fee string              fee to be taken when making a deposit (in ETH, decimas are allowed) (default "0")
+  -h, --help                    help for deploy
+      --relayerThreshold uint   number of votes required for a proposal to pass (default 1)
+      --relayers strings        list of initial relayers
+```
+
+#### ERC20
+erc20-related instructions
+
+```bash
+Usage:
+   celo-cli erc20 [command]
+
+Available Commands:
+  add-minter  Add a minter to an Erc20 mintable contract
+  allowance   Set a token contract as mintable/burnable
+  approve     Approve tokens in an ERC20 contract for transfer
+  balance     Query balance of an account in an ERC20 contract
+  deposit     Initiate a transfer of ERC20 tokens
+  mint        Mint tokens on an ERC20 mintable contract
+
+Flags:
+  -h, --help   help for erc20
+```
+
+*add-minter*
+Add a minter to an Erc20 mintable contract.
+
+```bash
+Usage:
+   celo-cli erc20 add-minter [flags]
+
+Flags:
+      --erc20Address string   ERC20 contract address
+  -h, --help                  help for add-minter
+      --minter string         address of minter
+```
+
+*allowance*
+Set a token contract as mintable/burnable in a handler.
+
+```bash
+Usage:
+   celo-cli erc20 allowance [flags]
+
+Flags:
+      --erc20Address string   ERC20 contract address
+  -h, --help                  help for allowance
+      --owner string          address of token owner
+      --spender string        address of spender
+```
+
+*approve*
+Approve tokens in an ERC20 contract for transfer.
+
+```bash
+Usage:
+   celo-cli erc20 approve [flags]
+
+Flags:
+      --amount string         amount to grant allowance
+      --decimals uint         ERC20 token decimals (default 18)
+      --erc20address string   ERC20 contract address
+  -h, --help                  help for approve
+      --recipient string      address of recipient
+```
+
+*balance*
+Query balance of an account in an ERC20 contract.
+
+```bash
+Usage:
+   celo-cli erc20 balance [flags]
+
+Flags:
+      --accountAddress string   address to receive balance of
+      --erc20Address string     ERC20 contract address
+  -h, --help                    help for balance
+```
+
+*deposit*
+Initiate a transfer of ERC20 tokens.
+
+```bash
+Usage:
+   celo-cli erc20 deposit [flags]
+
+Flags:
+      --amount string       amount to deposit
+      --bridge string       address of bridge contract
+      --decimals uint       ERC20 token decimals
+      --destId string       destination chain ID
+  -h, --help                help for deposit
+      --recipient string    address of recipient
+      --resourceId string   resource ID for transfer
+```
+
+*mint*
+Mint tokens on an ERC20 mintable contract.
+
+```bash
+Usage:
+   celo-cli erc20 mint [flags]
+
+Flags:
+      --amount string         amount to mint fee (in ETH)
+      --decimal uint          ERC20 token decimals (default 18)
+      --dstAddress string     Where tokens should be minted. Defaults to TX sender
+      --erc20Address string   ERC20 contract address
+  -h, --help                  help for mint
+```
 
 # ChainSafe Security Policy
 
