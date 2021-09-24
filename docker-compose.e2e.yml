@@ -4,7 +4,7 @@ version: '3'
 
 services:
   celo1:
-    image: "chainsafe/chainbridge-celo-blockchain:edge"
+    image: "chainsafe/chainbridge-celo-blockchain:0.1.4"
     networks:
       - celo
     container_name: celo1
@@ -18,7 +18,7 @@ services:
       - VALIDATOR=0xf4314cb9046bece6aa54bb9533155434d0c76909
 
   celo2:
-    image: "chainsafe/chainbridge-celo-blockchain:edge"
+    image: "chainsafe/chainbridge-celo-blockchain:0.1.4"
     networks:
       - celo
     container_name: celo2
@@ -35,7 +35,7 @@ services:
       - VALIDATOR=0xff93B45308FD417dF303D6515aB04D9e89a750Ca
 
   celo3:
-    image: "chainsafe/chainbridge-celo-blockchain:edge"
+    image: "chainsafe/chainbridge-celo-blockchain:0.1.4"
     networks:
       - celo
     container_name: celo3
@@ -106,7 +106,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-#    image: "chainsafe/chainbridge-core-example:evm-celo-dev"
     container_name: "relayer"
     command: run --config /cfg --testkey alice --fresh
     depends_on:
