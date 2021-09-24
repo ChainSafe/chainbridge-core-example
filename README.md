@@ -74,7 +74,8 @@ Flags:
   -h, --help   help for accounts
 ```
 
-*generate*
+**generate**
+
 The generate subcommand is used to generate the bridge keystore. If no options are specified, a Secp256k1 key will be made.
 
 ```bash
@@ -85,7 +86,8 @@ Flags:
   -h, --help   help for generate
 ```
 
-*import*
+**import**
+
 The import subcommand is used to import a keystore for the bridge.
 
 ```bash
@@ -120,7 +122,8 @@ Flags:
   -h, --help   help for admin
 ```
 
-*add-admin*
+**add-admin**
+
 Add a new admin.
 
 ```bash
@@ -133,7 +136,8 @@ Flags:
   -h, --help            help for add-admin
 ```
 
-*add-relayer*
+**add-relayer**
+
 Add a new relayer.
 
 ```bash
@@ -146,7 +150,8 @@ Flags:
       --relayer string   address to add
 ```
 
-*is-relayer*
+**is-relayer**
+
 Check if an address is registered as a relayer.
 
 ```bash
@@ -159,7 +164,8 @@ Flags:
       --relayer string   address to check
 ```
 
-*pause*
+**pause**
+
 Pause deposits and proposals,
 
 ```bash
@@ -172,7 +178,8 @@ Flags:
 
 ```
 
-*remove-admin*
+**remove-admin**
+
 Remove an existing admin.
 
 ```bash
@@ -185,7 +192,8 @@ Flags:
   -h, --help            help for remove-admin
 ```
 
-*remove-relayer*
+**remove-relayer**
+
 Remove a relayer.
 
 ```bash
@@ -198,7 +206,8 @@ Flags:
       --relayer string   address to remove
 ```
 
-*set-fee*
+**set-fee**
+
 Set a new fee for deposits.
 
 ```bash
@@ -211,7 +220,8 @@ Flags:
   -h, --help            help for set-fee
 ```
 
-*set-threshold*
+**set-threshold**
+
 et a new relayer vote threshold.
 
 ```bash
@@ -224,7 +234,8 @@ Flags:
       --threshold uint   new relayer threshold
 ```
 
-*unpause*
+**unpause**
+
 Unpause deposits and proposals.
 
 ```bash
@@ -236,7 +247,8 @@ Flags:
   -h, --help            help for unpause
 ```
 
-*withdraw*
+**withdraw**
+
 Withdraw tokens from the handler contract.
 
 ```bash
@@ -273,7 +285,8 @@ Flags:
   -h, --help   help for bridge
 ```
 
-*cancel-proposal*
+**cancel-proposal**
+
 Cancel an expired proposal.
 
 ```bash
@@ -288,7 +301,8 @@ Flags:
   -h, --help                help for cancel-proposal
 ```
 
-*query-proposal*
+**query-proposal**
+
 Query an inbound proposal.
 
 ```bash
@@ -303,7 +317,8 @@ Flags:
   -h, --help                help for query-proposal
 ```
 
-*query-resource*
+**query-resource**
+
 Query the contract address with the provided resource ID for a specific handler contract.
 
 ```bash
@@ -316,7 +331,8 @@ Flags:
       --resourceId string   resource ID to query
 ```
 
-*register-generic-resource*
+**register-generic-resource**
+
 Register a resource ID with a contract address for a generic handler.
 
 ```bash
@@ -333,7 +349,9 @@ Flags:
       --resourceId string   resource ID to query
       --target string       contract address to be registered
 ```
-*register-resource*
+
+**register-resource**
+
 Register a resource ID
 
 ```bash
@@ -348,7 +366,8 @@ Flags:
       --target string       contract address to be registered
 ```
 
-*set-burn*
+**set-burn**
+
 Set a token contract as mintable/burnable
 
 ```bash
@@ -406,7 +425,8 @@ Flags:
   -h, --help   help for erc20
 ```
 
-*add-minter*
+**add-minter**
+
 Add a minter to an Erc20 mintable contract.
 
 ```bash
@@ -420,7 +440,8 @@ Flags:
 
 ```
 
-*allowance*
+**allowance**
+
 Get the allowance of a spender for an address.
 
 ```bash
@@ -434,7 +455,8 @@ Flags:
       --spender string        address of spender
 ```
 
-*approve*
+**approve**
+
 Approve tokens in an ERC20 contract for transfer.
 
 ```bash
@@ -449,7 +471,8 @@ Flags:
       --recipient string      address of recipient
 ```
 
-*balance*
+**balance**
+
 Query balance of an account in an ERC20 contract.
 
 ```bash
@@ -462,7 +485,8 @@ Flags:
   -h, --help                    help for balance
 ```
 
-*deposit*
+**deposit**
+
 Initiate a transfer of ERC20 tokens.
 
 ```bash
@@ -479,7 +503,8 @@ Flags:
       --resourceId string   resource ID for transfer
 ```
 
-*mint*
+**mint**
+
 Mint tokens on an ERC20 mintable contract.
 
 ```bash
@@ -497,7 +522,8 @@ Flags:
 #### ERC721
 ERC721-related instructions.
 
-*add-minter*
+**add-minter**
+
 Add a minter to an ERC721 mintable contract.
 
 ```bash
@@ -526,7 +552,8 @@ Flags:
   -h, --help   help for utils
 ```
 
-*hashlist*
+**hashlist**
+
 List tx hashes.
 
 ```bash
@@ -538,7 +565,8 @@ Flags:
   -h, --help                 help for hashList
 ```
 
-*simulate*
+**simulate**
+
 Replay a failed transaction by simulating invocation; not state-altering
 
 ```bash
@@ -585,7 +613,8 @@ Flags:
   -h, --help   help for bridge
 ```
 
-*register-resource*
+**register-resource**
+
 Register a resource ID with a contract address for a handler
 
 ```bash
@@ -600,7 +629,8 @@ Flags:
       --target string       contract address to be registered
 ```
 
-*set-burn*
+**set-burn**
+
 Set a token contract as mintable/burnable in a handler
 
 ```bash
@@ -658,7 +688,8 @@ Flags:
   -h, --help   help for erc20
 ```
 
-*add-minter*
+**add-minter**
+
 Add a minter to an Erc20 mintable contract.
 
 ```bash
@@ -671,7 +702,8 @@ Flags:
       --minter string         address of minter
 ```
 
-*allowance*
+**allowance**
+
 Set a token contract as mintable/burnable in a handler.
 
 ```bash
@@ -685,7 +717,8 @@ Flags:
       --spender string        address of spender
 ```
 
-*approve*
+**approve**
+
 Approve tokens in an ERC20 contract for transfer.
 
 ```bash
@@ -700,7 +733,8 @@ Flags:
       --recipient string      address of recipient
 ```
 
-*balance*
+**balance**
+
 Query balance of an account in an ERC20 contract.
 
 ```bash
@@ -713,7 +747,8 @@ Flags:
   -h, --help                    help for balance
 ```
 
-*deposit*
+**deposit**
+
 Initiate a transfer of ERC20 tokens.
 
 ```bash
@@ -730,7 +765,8 @@ Flags:
       --resourceId string   resource ID for transfer
 ```
 
-*mint*
+**mint**
+
 Mint tokens on an ERC20 mintable contract.
 
 ```bash
@@ -764,7 +800,8 @@ Flags:
       --testkey string      Applies a predetermined test keystore to the chains.
 ```
 
-*run*
+**run**
+
 Running the relayer with the following flags:
 1. Path to our chain configurations: JSON config file(s) stored within a directory called configs.
 2. Path to our relayer's keystore: an ethereum keypair used for signing transactions.
