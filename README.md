@@ -800,8 +800,6 @@ Flags:
       --testkey string      Applies a predetermined test keystore to the chains.
 ```
 
-**run**
-
 Running the relayer with the following flags:
 1. Path to our chain configurations: JSON config file(s) stored within a directory called configs.
 2. Path to our relayer's keystore: an ethereum keypair used for signing transactions.
