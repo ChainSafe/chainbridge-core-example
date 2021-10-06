@@ -60,7 +60,7 @@ func Run() error {
 		panic(err)
 	}
 	ethClient := evmclient.NewEVMClient()
-	err = ethClient.Configurate(viper.GetString(config.ConfigFlagName), "config_goerli")
+	err = ethClient.Configurate(viper.GetString(config.ConfigFlagName), "config_local")
 	if err != nil {
 		panic(err)
 	}
