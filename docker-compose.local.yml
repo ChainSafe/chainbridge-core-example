@@ -3,14 +3,54 @@
 version: '3'
 
 services:
-  celo:
-    image: "chainsafe/chainbridge-bootstrapped-celo:v1.0.0"
-    container_name: celo
-    ports:
-      - "8546:8545"
-  
-  geth:
-    image: "chainsafe/chainbridge-geth:20200505131100-5586a65"
-    container_name: geth
+  celo1:
+    image: "chainsafe/chainbridge-celo-blockchain:0.1.4"
+    container_name: celo1
+    networks:
+      - celo
     ports:
       - "8545:8545"
+      - "8546:8546"
+    environment:
+      - NODEKEY=98ab333347a12cef869f92b3de44085f9e44891e513bcf1d76a99eecbcdd5e17
+      - DATADIR=celo-dump1
+      - NETWORKID=333
+      - VALIDATOR=0xf4314cb9046bece6aa54bb9533155434d0c76909
+
+  celo2:
+    image: "chainsafe/chainbridge-celo-blockchain:0.1.4"
+    networks:
+      - celo
+    container_name: celo2
+    ports:
+      - "8645:8545"
+      - "8646:8546"
+    depends_on:
+      - celo1
+    environment:
+      - ACCOUNTS=0xff93B45308FD417dF303D6515aB04D9e89a750Ca
+      - BOOTNODE=enode://47eccabfa6fa81f7ae7d8c094485fd521789e22e529916a2409970b6e99b1d1b6c590ad71bd08f182071313b2e03d319f4f6b625b28b6ab7768bb2de3f2a6eed@celo1:30303
+      - DATADIR=celo-dump2
+      - NETWORKID=333
+      - VALIDATOR=0xff93B45308FD417dF303D6515aB04D9e89a750Ca
+
+  # SECOND CHAIN
+  evm:
+    build:
+      context: ./e2e/geth-build
+      dockerfile: Dockerfile
+    container_name: evm
+    networks:
+      - evm
+    ports:
+      - "8845:8545"
+      - "8846:8546"
+    environment:
+      - NODEKEY=98ab333347a12cef869f92b3de44085f9e44891e513bcf1d76a99eecbcdd5e17
+      - NETWORKID=420
+      - MINE=true
+    entrypoint: "/root/entrypoint.sh"
+
+networks:
+  evm:
+  celo:
