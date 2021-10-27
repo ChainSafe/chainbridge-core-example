@@ -1,3 +1,6 @@
+// Copyright 2021 ChainSafe Systems
+// SPDX-License-Identifier: LGPL-3.0-only
+
 package example
 
 import (
@@ -5,52 +8,24 @@ import (
 	"os/signal"
 	"syscall"
 
-	//celoVoter "github.com/ChainSafe/chainbridge-celo-module/voter"
-	"github.com/ChainSafe/chainbridge-core-example/example/keystore"
+	"github.com/ChainSafe/chainbridge-core/chains/evm/evmtransaction"
+
 	"github.com/ChainSafe/chainbridge-core/chains/evm"
 
 	"github.com/ChainSafe/chainbridge-core/chains/evm/evmclient"
 	"github.com/ChainSafe/chainbridge-core/chains/evm/listener"
 	"github.com/ChainSafe/chainbridge-core/chains/evm/voter"
-	"github.com/ChainSafe/chainbridge-core/chains/optimism/optimismclient"
 
-	optimismListener "github.com/ChainSafe/chainbridge-core/chains/optimism/listener"
-
-	// "github.com/ChainSafe/chainbridge-core/chains/substrate"
-	// subListener "github.com/ChainSafe/chainbridge-core/chains/substrate/listener"
-	// subWriter "github.com/ChainSafe/chainbridge-core/chains/substrate/writer"
 	"github.com/ChainSafe/chainbridge-core/config"
 	"github.com/ChainSafe/chainbridge-core/lvldb"
 	"github.com/ChainSafe/chainbridge-core/relayer"
-
-	//subModule "github.com/ChainSafe/chainbridge-substrate-module"
+	optimismListener "github.com/ChainSafe/chainbridge-optimism-module/listener"
+	"github.com/ChainSafe/chainbridge-optimism-module/optimismclient"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
 )
 
-var AliceKp = keystore.TestKeyRing.EthereumKeys[keystore.AliceKey]
-var BobKp = keystore.TestKeyRing.EthereumKeys[keystore.BobKey]
-var EveKp = keystore.TestKeyRing.EthereumKeys[keystore.EveKey]
-
-var (
-	DefaultRelayerAddresses = []common.Address{
-		common.HexToAddress(keystore.TestKeyRing.EthereumKeys[keystore.AliceKey].Address()),
-		common.HexToAddress(keystore.TestKeyRing.EthereumKeys[keystore.BobKey].Address()),
-		common.HexToAddress(keystore.TestKeyRing.EthereumKeys[keystore.CharlieKey].Address()),
-		common.HexToAddress(keystore.TestKeyRing.EthereumKeys[keystore.DaveKey].Address()),
-		common.HexToAddress(keystore.TestKeyRing.EthereumKeys[keystore.EveKey].Address()),
-	}
-)
-
-const DefaultGasLimit = 6721975
-const DefaultGasPrice = 20000000000
-
-const TestEndpoint = "ws://localhost:8545"
-const TestEndpointCelo = "ws://localhost:8546"
-
-//Bridge:             0x62877dDCd49aD22f5eDfc6ac108e9a4b5D2bD88B
-//Erc20 Handler:      0x3167776db165D8eA0f51790CA2bbf44Db5105ADF
 func Run() error {
 	errChn := make(chan error)
 	stopChn := make(chan struct{})
@@ -59,57 +34,6 @@ func Run() error {
 	if err != nil {
 		panic(err)
 	}
-	ethClient := evmclient.NewEVMClient()
-	err = ethClient.Configurate(viper.GetString(config.ConfigFlagName), "config_local")
-	if err != nil {
-		panic(err)
-	}
-	ethCfg := ethClient.GetConfig()
-
-	eventHandler := listener.NewETHEventHandler(common.HexToAddress(ethCfg.SharedEVMConfig.Bridge), ethClient)
-	eventHandler.RegisterEventHandler(ethCfg.SharedEVMConfig.Erc20Handler, listener.Erc20EventHandler)
-	evmListener := listener.NewEVMListener(ethClient, eventHandler, common.HexToAddress(ethCfg.SharedEVMConfig.Bridge))
-	mh := voter.NewEVMMessageHandler(ethClient, common.HexToAddress(ethCfg.SharedEVMConfig.Bridge))
-	mh.RegisterMessageHandler(common.HexToAddress(ethCfg.SharedEVMConfig.Erc20Handler), voter.ERC20MessageHandler)
-	evmVoter := voter.NewVoter(mh, ethClient)
-	evmChain := evm.NewEVMChain(evmListener, evmVoter, db, *ethCfg.SharedEVMConfig.GeneralChainConfig.Id, &ethCfg.SharedEVMConfig)
-
-	// subC := subModule.NewSubstrateClient(stopChn)
-	// err = subC.Configurate(viper.GetString(config.ConfigFlagName), "subConfig")
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// subCfg := subC.GetConfig()
-
-	// subL := subListener.NewSubstrateListener(subC)
-	// subW := subWriter.NewSubstrateWriter(
-	// 	*subCfg.SharedSubstrateConfig.GeneralChainConfig.Id,
-	// 	subC,
-	// 	subCfg.SharedSubstrateConfig.UseExtendedCall,
-	// )
-
-	// // TODO: really not need this dynamic handler assignment
-	// subL.RegisterSubscription(relayer.FungibleTransfer, subListener.FungibleTransferHandler)
-	// subL.RegisterSubscription(relayer.GenericTransfer, subListener.GenericTransferHandler)
-	// subL.RegisterSubscription(relayer.NonFungibleTransfer, subListener.NonFungibleTransferHandler)
-
-	// subW.RegisterHandler(relayer.FungibleTransfer, subWriter.CreateFungibleProposal)
-	// subChain := substrate.NewSubstrateChain(subL, subW, db, *subCfg.SharedSubstrateConfig.GeneralChainConfig.Id, &subCfg.SharedSubstrateConfig)
-
-	// Celo setup
-	// ethClientCelo := evmclient.NewEVMClient()
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// celoCfg := ethClient.GetConfig()
-	// ethClientCelo.Configurate(viper.GetString(config.ConfigFlagName), "config_celo")
-	// eventHandlerCelo := listener.NewETHEventHandler(common.HexToAddress("0x62877dDCd49aD22f5eDfc6ac108e9a4b5D2bD88B"), ethClientCelo)
-	// eventHandlerCelo.RegisterEventHandler("0x3167776db165D8eA0f51790CA2bbf44Db5105ADF", listener.Erc20EventHandler)
-	// evmListenerCelo := listener.NewEVMListener(ethClientCelo, eventHandlerCelo, common.HexToAddress("0x62877dDCd49aD22f5eDfc6ac108e9a4b5D2bD88B"))
-	// mhCelo := voter.NewEVMMessageHandler(ethClientCelo, common.HexToAddress("0x62877dDCd49aD22f5eDfc6ac108e9a4b5D2bD88B"))
-	// mhCelo.RegisterMessageHandler(common.HexToAddress("0x3167776db165D8eA0f51790CA2bbf44Db5105ADF"), celoVoter.ERC20CeloMessageHandler)
-	// evmVoterCelo := voter.NewVoter(mhCelo, ethClientCelo)
-	// celoChain := evm.NewEVMChain(evmListenerCelo, evmVoterCelo, db, 2, &celoCfg.SharedEVMConfig)
 
 	// Optimism setup
 	ethClientOptimism := optimismclient.NewEVMClient()
@@ -124,10 +48,25 @@ func Run() error {
 	evmListenerOptimism := optimismListener.NewEVMListener(ethClientOptimism, eventHandlerOptimism, common.HexToAddress(optimismCfg.SharedEVMConfig.Bridge))
 	mhOptimism := voter.NewEVMMessageHandler(ethClientOptimism, common.HexToAddress(optimismCfg.SharedEVMConfig.Bridge))
 	mhOptimism.RegisterMessageHandler(common.HexToAddress(optimismCfg.SharedEVMConfig.Erc20Handler), voter.ERC20MessageHandler)
-	evmVoterOptimism := voter.NewVoter(mhOptimism, ethClientOptimism)
+	evmVoterOptimism := voter.NewVoter(mhOptimism, ethClientOptimism, evmtransaction.NewTransaction)
 	optimismChain := evm.NewEVMChain(evmListenerOptimism, evmVoterOptimism, db, *optimismCfg.SharedEVMConfig.GeneralChainConfig.Id, &optimismCfg.SharedEVMConfig)
 
-	r := relayer.NewRelayer([]relayer.RelayedChain{evmChain, optimismChain})
+	////EVM setup
+	evmClient := evmclient.NewEVMClient()
+	err = evmClient.Configurate(viper.GetString(config.ConfigFlagName), "config_local")
+	if err != nil {
+		panic(err)
+	}
+	evmConfig := evmClient.GetConfig()
+	eventHandlerEVM := listener.NewETHEventHandler(common.HexToAddress(evmConfig.SharedEVMConfig.Bridge), evmClient)
+	eventHandlerEVM.RegisterEventHandler(evmConfig.SharedEVMConfig.Erc20Handler, listener.Erc20EventHandler)
+	evmListener := listener.NewEVMListener(evmClient, eventHandlerEVM, common.HexToAddress(evmConfig.SharedEVMConfig.Bridge))
+	mhEVM := voter.NewEVMMessageHandler(evmClient, common.HexToAddress(evmConfig.SharedEVMConfig.Bridge))
+	mhEVM.RegisterMessageHandler(common.HexToAddress(evmConfig.SharedEVMConfig.Erc20Handler), voter.ERC20MessageHandler)
+	evmVoter := voter.NewVoter(mhEVM, evmClient, evmtransaction.NewTransaction)
+	evmChain := evm.NewEVMChain(evmListener, evmVoter, db, *evmConfig.SharedEVMConfig.GeneralChainConfig.Id, &evmConfig.SharedEVMConfig)
+
+	r := relayer.NewRelayer([]relayer.RelayedChain{optimismChain, evmChain})
 
 	go r.Start(stopChn, errChn)
 
@@ -144,7 +83,7 @@ func Run() error {
 		close(stopChn)
 		return err
 	case sig := <-sysErr:
-		log.Info().Msgf("terminating got [%v] signal", sig)
+		log.Info().Msgf("terminating got ` [%v] signal", sig)
 		return nil
 	}
 }
