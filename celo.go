@@ -6,6 +6,16 @@ import (
 	"github.com/ChainSafe/chainbridge-core/chains/evm/listener"
 	"github.com/ChainSafe/chainbridge-core/chains/evm/voter"
 	"github.com/ChainSafe/chainbridge-core/lvldb"
+	"github.com/google/wire"
+)
+
+var CeloSet = wire.NewSet(
+	NewEVMCeloClientWithConfig,
+	RegisterNewCeloEventHandler,
+	NewCeloEVMListener,
+	NewCeloEVMMessageHandler,
+	NewCeloEVMVoter,
+	NewCeloEVMChain,
 )
 
 type CeloEVMClient *evmclient.EVMClient

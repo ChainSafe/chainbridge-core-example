@@ -6,6 +6,16 @@ import (
 	"github.com/ChainSafe/chainbridge-core/chains/evm/listener"
 	"github.com/ChainSafe/chainbridge-core/chains/evm/voter"
 	"github.com/ChainSafe/chainbridge-core/lvldb"
+	"github.com/google/wire"
+)
+
+var EvmSet = wire.NewSet(
+	NewEVMClientWithConfig,
+	RegisterNewEVMEventHandler,
+	NewEVMListener,
+	NewEVMMessageHandler,
+	NewEVMVoter,
+	NewEVMChain,
 )
 
 type EVMClient *evmclient.EVMClient

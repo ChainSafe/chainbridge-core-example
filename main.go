@@ -24,36 +24,26 @@ func main() {
 		configFlagName:     "",
 	}
 
-	e := InitializeEvent(
+	// Decide depending on flags
+	e := CreateEVMCelloChains(
 		cnfg,
 		transaction.NewCeloTransaction,
 	)
-	fmt.Println(e)
 
+	fmt.Println(e)
 }
 
-var CeloSet = wire.NewSet(
-	NewEVMCeloClientWithConfig,
-	RegisterNewCeloEventHandler,
-	NewCeloEVMListener,
-	NewCeloEVMMessageHandler,
-	NewCeloEVMVoter,
-	NewCeloEVMChain,
-)
-
-var EvmSet = wire.NewSet(
-	NewEVMClientWithConfig,
-	RegisterNewEVMEventHandler,
-	NewEVMListener,
-	NewEVMMessageHandler,
-	NewEVMVoter,
-	NewEVMChain,
-)
-
-func InitializeEvent(
+func CreateEVMCelloChains(
 	cnfg Config,
 	txFabric voter.TxFabric,
 ) EVMChain {
 	wire.Build(NewLvlDB, CeloSet, EvmSet)
 	return &evm.EVMChain{}
 }
+
+// func CreateEVMSubstrateChains(
+// 	cnfg Config,
+// 	txFabric voter.TxFabric,
+// ) {
+// 	wire.Build(NewLvlDB, SubstrateSet, EvmSet)
+// }
