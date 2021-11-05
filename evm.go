@@ -32,13 +32,13 @@ func RegisterNewEVMEventHandler(cnfg Config, client EVMClient) EVMEventListener 
 
 type EVMListener *listener.EVMListener
 
-func NewEVMListener(cnfg Config, client CeloEVMClient, eventHandler CeloEventListener) EVMListener {
+func NewEVMListener(cnfg Config, client EVMClient, eventHandler EVMEventListener) EVMListener {
 	return _newEVMListener(cnfg, client, eventHandler)
 }
 
 type EVMMessageHandler *voter.EVMMessageHandler
 
-func NewEVMMessageHandler(cnfg Config, client CeloEVMClient) EVMMessageHandler {
+func NewEVMMessageHandler(cnfg Config, client EVMClient) EVMMessageHandler {
 	return _newEVMMessageHandler(cnfg, client)
 }
 

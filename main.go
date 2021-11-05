@@ -6,8 +6,9 @@ package main
 import (
 	"fmt"
 
-	"github.com/ChainSafe/chainbridge-celo-module/transaction"
+	celotx "github.com/ChainSafe/chainbridge-celo-module/transaction"
 	"github.com/ChainSafe/chainbridge-core/chains/evm"
+	"github.com/ChainSafe/chainbridge-core/chains/evm/evmtransaction"
 	"github.com/ChainSafe/chainbridge-core/chains/evm/voter"
 	"github.com/google/wire"
 )
@@ -25,25 +26,32 @@ func main() {
 	}
 
 	// Decide depending on flags
-	e := CreateEVMCelloChains(
+	celloChain := CreateEVMCelloChain(
 		cnfg,
-		transaction.NewCeloTransaction,
+		celotx.NewCeloTransaction,
 	)
 
-	fmt.Println(e)
+	evmChain := CreateEVMChain(
+		cnfg,
+		evmtransaction.NewTransaction,
+	)
+
+	fmt.Println(celloChain)
+	fmt.Println(evmChain)
 }
 
-func CreateEVMCelloChains(
+func CreateEVMCelloChain(
 	cnfg Config,
 	txFabric voter.TxFabric,
-) EVMChain {
-	wire.Build(NewLvlDB, CeloSet, EvmSet)
+) CeloEVMChain {
+	wire.Build(NewLvlDB, CeloSet)
 	return &evm.EVMChain{}
 }
 
-// func CreateEVMSubstrateChains(
-// 	cnfg Config,
-// 	txFabric voter.TxFabric,
-// ) {
-// 	wire.Build(NewLvlDB, SubstrateSet, EvmSet)
-// }
+func CreateEVMChain(
+	cnfg Config,
+	txFabric voter.TxFabric,
+) EVMChain {
+	wire.Build(NewLvlDB, EvmSet)
+	return &evm.EVMChain{}
+}
