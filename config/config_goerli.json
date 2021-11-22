@@ -1,0 +1,11 @@
+{
+  "name": "goerli",
+  "id": "1",
+  "endpoint": "https://eth-goerli.alchemyapi.io/v2/9jcoyKYv-uf2VMIALqA_ul6qBT5sXMJh",
+  "from": "0x3e51e1e60455fD37418E7252674F20C300E5B7EF",
+  "bridge": "0x537949Ad4d0CBf45E4Bb6B921FF49acD93cd040b",
+  "erc20Handler": "0x3c30b56DEd047fe6225f7004Ea4be1ae70C9026a",
+  "gasLimit": "9000000",
+  "maxGasPrice": "20000000000",
+  "blockConfirmations": "10"
+}

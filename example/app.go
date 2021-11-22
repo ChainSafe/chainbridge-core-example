@@ -8,16 +8,15 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/ChainSafe/chainbridge-core/chains/evm/evmtransaction"
-
-	"github.com/ChainSafe/chainbridge-celo-module/transaction"
-
 	"github.com/ChainSafe/chainbridge-core/chains/evm"
 	"github.com/ChainSafe/chainbridge-core/chains/evm/evmclient"
+	"github.com/ChainSafe/chainbridge-core/chains/evm/evmgaspricer"
+	"github.com/ChainSafe/chainbridge-core/chains/evm/evmtransaction"
 	"github.com/ChainSafe/chainbridge-core/chains/evm/listener"
 	"github.com/ChainSafe/chainbridge-core/chains/evm/voter"
 	"github.com/ChainSafe/chainbridge-core/config"
 	"github.com/ChainSafe/chainbridge-core/lvldb"
+	"github.com/ChainSafe/chainbridge-core/opentelemetry"
 	"github.com/ChainSafe/chainbridge-core/relayer"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/rs/zerolog/log"
@@ -28,42 +27,61 @@ func Run() error {
 	errChn := make(chan error)
 	stopChn := make(chan struct{})
 
-	db, err := lvldb.NewLvlDB(viper.GetString(config.BlockstoreFlagName))
+	db, err := lvldb.NewLvlDB(viper.GetString(config.ChainConfigFlagName))
 	if err != nil {
 		panic(err)
 	}
 
-	// CELO1 setup
-	celo1Client := evmclient.NewEVMClient()
-	err = celo1Client.Configurate(viper.GetString(config.ConfigFlagName), "config_celo.json")
+	// goerli setup
+	goerliClient := evmclient.NewEVMClient()
 	if err != nil {
 		panic(err)
 	}
-	celo1Cfg := celo1Client.GetConfig()
-	eventHandler := listener.NewETHEventHandler(common.HexToAddress(celo1Cfg.SharedEVMConfig.Bridge), celo1Client)
-	eventHandler.RegisterEventHandler(celo1Cfg.SharedEVMConfig.Erc20Handler, listener.Erc20EventHandler)
-	celoListener1 := listener.NewEVMListener(celo1Client, eventHandler, common.HexToAddress(celo1Cfg.SharedEVMConfig.Bridge))
-	mh := voter.NewEVMMessageHandler(celo1Client, common.HexToAddress(celo1Cfg.SharedEVMConfig.Bridge))
-	mh.RegisterMessageHandler(common.HexToAddress(celo1Cfg.SharedEVMConfig.Erc20Handler), voter.ERC20MessageHandler)
-	celoVoter1 := voter.NewVoter(mh, celo1Client, transaction.NewCeloTransaction)
-	celoChain1 := evm.NewEVMChain(celoListener1, celoVoter1, db, *celo1Cfg.SharedEVMConfig.GeneralChainConfig.Id, &celo1Cfg.SharedEVMConfig)
 
-	////EVM setup
-	evmClient := evmclient.NewEVMClient()
-	err = evmClient.Configurate(viper.GetString(config.ConfigFlagName), "config_evm.json")
+	err = goerliClient.Configurate(viper.GetString(config.ChainConfigFlagName), "config_goerli.json")
 	if err != nil {
 		panic(err)
 	}
-	evmConfig := evmClient.GetConfig()
-	eventHandlerEVM := listener.NewETHEventHandler(common.HexToAddress(evmConfig.SharedEVMConfig.Bridge), evmClient)
-	eventHandlerEVM.RegisterEventHandler(evmConfig.SharedEVMConfig.Erc20Handler, listener.Erc20EventHandler)
-	evmListener := listener.NewEVMListener(evmClient, eventHandlerEVM, common.HexToAddress(evmConfig.SharedEVMConfig.Bridge))
-	mhEVM := voter.NewEVMMessageHandler(evmClient, common.HexToAddress(evmConfig.SharedEVMConfig.Bridge))
-	mhEVM.RegisterMessageHandler(common.HexToAddress(evmConfig.SharedEVMConfig.Erc20Handler), voter.ERC20MessageHandler)
-	evmVoter := voter.NewVoter(mhEVM, evmClient, evmtransaction.NewTransaction)
-	evmChain := evm.NewEVMChain(evmListener, evmVoter, db, *evmConfig.SharedEVMConfig.GeneralChainConfig.Id, &evmConfig.SharedEVMConfig)
+	goerliCfg := goerliClient.GetConfig()
+	eventHandlerGoerli := listener.NewETHEventHandler(common.HexToAddress(goerliCfg.SharedEVMConfig.Bridge), goerliClient)
+	eventHandlerGoerli.RegisterEventHandler(goerliCfg.SharedEVMConfig.Erc20Handler, listener.Erc20EventHandler)
+	goerliListener := listener.NewEVMListener(goerliClient, eventHandlerGoerli, common.HexToAddress(goerliCfg.SharedEVMConfig.Bridge))
+	mhGoerli := voter.NewEVMMessageHandler(goerliClient, common.HexToAddress(goerliCfg.SharedEVMConfig.Bridge))
+	mhGoerli.RegisterMessageHandler(common.HexToAddress(goerliCfg.SharedEVMConfig.Erc20Handler), voter.ERC20MessageHandler)
+	goerliVoter := voter.NewVoter(mhGoerli, goerliClient, evmtransaction.NewTransaction, evmgaspricer.NewLondonGasPriceClient(goerliClient, nil))
+	goerliChain := evm.NewEVMChain(goerliListener, goerliVoter, db, *goerliCfg.SharedEVMConfig.GeneralChainConfig.Id, &goerliCfg.SharedEVMConfig)
 
-	r := relayer.NewRelayer([]relayer.RelayedChain{celoChain1, evmChain})
+	// rinkeby setup
+	rinkebyClient := evmclient.NewEVMClient()
+	err = rinkebyClient.Configurate(viper.GetString(config.ChainConfigFlagName), "config_rinkeby.json")
+	if err != nil {
+		panic(err)
+	}
+	ethCfg := rinkebyClient.GetConfig()
+	eventHandler := listener.NewETHEventHandler(common.HexToAddress(ethCfg.SharedEVMConfig.Bridge), rinkebyClient)
+	eventHandler.RegisterEventHandler(ethCfg.SharedEVMConfig.Erc20Handler, listener.Erc20EventHandler)
+	evmListener := listener.NewEVMListener(rinkebyClient, eventHandler, common.HexToAddress(ethCfg.SharedEVMConfig.Bridge))
+	mhRinkeby := voter.NewEVMMessageHandler(rinkebyClient, common.HexToAddress(ethCfg.SharedEVMConfig.Bridge))
+	mhRinkeby.RegisterMessageHandler(common.HexToAddress(ethCfg.SharedEVMConfig.Erc20Handler), voter.ERC20MessageHandler)
+	evmVoter := voter.NewVoter(mhRinkeby, rinkebyClient, evmtransaction.NewTransaction, evmgaspricer.NewLondonGasPriceClient(rinkebyClient, nil))
+	evmChain := evm.NewEVMChain(evmListener, evmVoter, db, *ethCfg.SharedEVMConfig.GeneralChainConfig.Id, &ethCfg.SharedEVMConfig)
+
+	// celo setup
+	celoClient := evmclient.NewEVMClient()
+	err = celoClient.Configurate(viper.GetString(config.ChainConfigFlagName), "config_celo.json")
+	if err != nil {
+		panic(err)
+	}
+	celoCfg := celoClient.GetConfig()
+	eventHandler = listener.NewETHEventHandler(common.HexToAddress(celoCfg.SharedEVMConfig.Bridge), celoClient)
+	eventHandler.RegisterEventHandler(celoCfg.SharedEVMConfig.Erc20Handler, listener.Erc20EventHandler)
+	celoListener1 := listener.NewEVMListener(celoClient, eventHandler, common.HexToAddress(celoCfg.SharedEVMConfig.Bridge))
+	mhCelo := voter.NewEVMMessageHandler(celoClient, common.HexToAddress(celoCfg.SharedEVMConfig.Bridge))
+	mhCelo.RegisterMessageHandler(common.HexToAddress(celoCfg.SharedEVMConfig.Erc20Handler), voter.ERC20MessageHandler)
+	celoVoter := voter.NewVoter(mhCelo, celoClient, evmtransaction.NewTransaction, evmgaspricer.NewLondonGasPriceClient(celoClient, nil))
+	celoChain := evm.NewEVMChain(celoListener1, celoVoter, db, *celoCfg.SharedEVMConfig.GeneralChainConfig.Id, &celoCfg.SharedEVMConfig)
+
+	r := relayer.NewRelayer([]relayer.RelayedChain{evmChain, goerliChain, celoChain}, &opentelemetry.ConsoleTelemetry{})
 
 	go r.Start(stopChn, errChn)
 
@@ -80,7 +98,7 @@ func Run() error {
 		close(stopChn)
 		return err
 	case sig := <-sysErr:
-		log.Info().Msgf("terminating got ` [%v] signal", sig)
+		log.Info().Msgf("terminating got [%v] signal", sig)
 		return nil
 	}
 }
