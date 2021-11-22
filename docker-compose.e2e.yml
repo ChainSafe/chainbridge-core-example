@@ -1,0 +1,122 @@
+# Copyright 2020 ChainSafe Systems
+# SPDX-License-Identifier: LGPL-3.0-only
+version: '3'
+
+services:
+  celo1:
+    image: "chainsafe/chainbridge-celo-blockchain:0.1.4"
+    networks:
+      - celo
+    container_name: celo1
+    ports:
+      - "8545:8545"
+      - "8546:8546"
+    environment:
+      - NODEKEY=98ab333347a12cef869f92b3de44085f9e44891e513bcf1d76a99eecbcdd5e17
+      - DATADIR=celo-dump1
+      - NETWORKID=333
+      - VALIDATOR=0xf4314cb9046bece6aa54bb9533155434d0c76909
+
+  celo2:
+    image: "chainsafe/chainbridge-celo-blockchain:0.1.4"
+    networks:
+      - celo
+    container_name: celo2
+    ports:
+      - "8645:8545"
+      - "8646:8546"
+    depends_on:
+      - celo1
+    environment:
+      - ACCOUNTS=0xff93B45308FD417dF303D6515aB04D9e89a750Ca
+      - BOOTNODE=enode://47eccabfa6fa81f7ae7d8c094485fd521789e22e529916a2409970b6e99b1d1b6c590ad71bd08f182071313b2e03d319f4f6b625b28b6ab7768bb2de3f2a6eed@celo1:30303
+      - DATADIR=celo-dump2
+      - NETWORKID=333
+      - VALIDATOR=0xff93B45308FD417dF303D6515aB04D9e89a750Ca
+
+  celo3:
+    image: "chainsafe/chainbridge-celo-blockchain:0.1.4"
+    networks:
+      - celo
+    container_name: celo3
+    ports:
+      - "8745:8545"
+      - "8746:8546"
+    depends_on:
+      - celo1
+    environment:
+      - ACCOUNTS=0x8e0a907331554AF72563Bd8D43051C2E64Be5d35
+      - BOOTNODE=enode://47eccabfa6fa81f7ae7d8c094485fd521789e22e529916a2409970b6e99b1d1b6c590ad71bd08f182071313b2e03d319f4f6b625b28b6ab7768bb2de3f2a6eed@celo1:30303
+      - DATADIR=celo-dump3
+      - NETWORKID=333
+      - VALIDATOR=0x8e0a907331554AF72563Bd8D43051C2E64Be5d35
+
+  # SECOND CHAIN
+  evm1:
+    build:
+      context: ./e2e/geth-build
+      dockerfile: Dockerfile
+    container_name: evm1
+    networks:
+      - evm
+    ports:
+      - "8845:8545"
+      - "8846:8546"
+    environment:
+      - NODEKEY=98ab333347a12cef869f92b3de44085f9e44891e513bcf1d76a99eecbcdd5e17
+      - NETWORKID=420
+      - MINE=true
+    entrypoint: "/root/entrypoint.sh"
+  evm2:
+    build:
+      context: ./e2e/geth-build
+      dockerfile: Dockerfile
+    container_name: evm2
+    depends_on:
+      - evm1
+    networks:
+      - evm
+    ports:
+      - "8945:8545"
+      - "8946:8546"
+    environment:
+      - ACCOUNTS=0xff93B45308FD417dF303D6515aB04D9e89a750Ca
+      - BOOTNODE=enode://47eccabfa6fa81f7ae7d8c094485fd521789e22e529916a2409970b6e99b1d1b6c590ad71bd08f182071313b2e03d319f4f6b625b28b6ab7768bb2de3f2a6eed@evm1:30303
+      - NETWORKID=420
+    entrypoint: "/root/entrypoint.sh"
+  evm3:
+    build:
+      context: ./e2e/geth-build
+      dockerfile: Dockerfile
+    container_name: evm3
+    networks:
+      - evm
+    depends_on:
+      - evm1
+    ports:
+      - "8045:8545"
+      - "8046:8546"
+    environment:
+      - ACCOUNTS=0x8e0a907331554AF72563Bd8D43051C2E64Be5d35
+      - BOOTNODE=enode://47eccabfa6fa81f7ae7d8c094485fd521789e22e529916a2409970b6e99b1d1b6c590ad71bd08f182071313b2e03d319f4f6b625b28b6ab7768bb2de3f2a6eed@evm1:30303
+      - NETWORKID=420
+    entrypoint: "/root/entrypoint.sh"
+
+  relayer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: "relayer"
+    command: run --config /cfg --testkey alice --fresh
+    depends_on:
+      - evm3
+      - celo3
+    networks:
+      - evm
+      - celo
+    volumes:
+      - ./e2e/cfg:/cfg
+
+networks:
+  evm:
+  celo:

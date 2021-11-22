@@ -1,0 +1,11 @@
+{
+  "name": "celo",
+  "id": "2",
+  "endpoint": "https://alfajores-forno.celo-testnet.org",
+  "from": "0x3e51e1e60455fD37418E7252674F20C300E5B7EF",
+  "bridge": "0x7B4ff372ec4159404c6d216C34F6d0B29F080665",
+  "erc20Handler": "0x442E7f13AA0cfAbF3FfaEfA4649f5fBe68ff9db2",
+  "gasLimit": "9000000",
+  "maxGasPrice": "2000000000",
+  "blockConfirmations": "10"
+}
