@@ -30,7 +30,7 @@ var (
 )
 
 func init() {
-	config.BindFlags(runCMD)
+	config.BindFlags(rootCMD)
 }
 
 func Execute() {
