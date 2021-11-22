@@ -7,10 +7,10 @@ go 1.15
 //replace github.com/ChainSafe/chainbridge-celo-module => ../chainbridge-celo-module
 
 require (
-	github.com/ChainSafe/chainbridge-celo-module v0.0.0-20210812101441-b6d7ad422a53
-	github.com/ChainSafe/chainbridge-core v0.0.0-20210922142450-7e66fa42a68e
-	github.com/ethereum/go-ethereum v1.10.9
-	github.com/rs/zerolog v1.25.0
+	github.com/ChainSafe/chainbridge-celo-module v0.0.0-20211122112708-13f883124102
+	github.com/ChainSafe/chainbridge-core v0.0.0-20211119192835-f34d57d08455
+	github.com/ethereum/go-ethereum v1.10.12
+	github.com/rs/zerolog v1.26.0
 	github.com/spf13/cobra v1.2.1
 	github.com/spf13/viper v1.9.0
 	github.com/stretchr/testify v1.7.0
