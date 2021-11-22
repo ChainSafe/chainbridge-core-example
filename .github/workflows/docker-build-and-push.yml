@@ -47,7 +47,7 @@ jobs:
           # check if branch/tag that triggered workflow was from tags
           if [[ $GITHUB_REF == refs/tags/* ]]; then
 
-            # set version 
+            # set version
             VERSION=${GITHUB_REF#refs/tags/}
 
             # append version to tags
