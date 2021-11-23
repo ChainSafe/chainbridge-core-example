@@ -27,7 +27,7 @@ func Run() error {
 	errChn := make(chan error)
 	stopChn := make(chan struct{})
 
-	db, err := lvldb.NewLvlDB(viper.GetString(config.ChainConfigFlagName))
+	db, err := lvldb.NewLvlDB(viper.GetString(config.BlockstoreFlagName))
 	if err != nil {
 		panic(err)
 	}
