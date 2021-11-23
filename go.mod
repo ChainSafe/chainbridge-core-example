@@ -4,7 +4,7 @@ go 1.15
 
 //replace github.com/ChainSafe/chainbridge-core => ../chainbridge-core
 //
-//replace github.com/ChainSafe/chainbridge-celo-module => ../chainbridge-celo-module
+replace github.com/ChainSafe/chainbridge-celo-module => ../chainbridge-celo-module
 
 require (
 	github.com/ChainSafe/chainbridge-celo-module v0.0.0-20211122112708-13f883124102
