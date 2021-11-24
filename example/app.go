@@ -27,7 +27,7 @@ func Run() error {
 	errChn := make(chan error)
 	stopChn := make(chan struct{})
 
-	db, err := lvldb.NewLvlDB(viper.GetString(config.ChainConfigFlagName))
+	db, err := lvldb.NewLvlDB(viper.GetString(config.BlockstoreFlagName))
 	if err != nil {
 		panic(err)
 	}
@@ -63,8 +63,8 @@ func Run() error {
 	evmListener := listener.NewEVMListener(rinkebyClient, eventHandler, common.HexToAddress(ethCfg.SharedEVMConfig.Bridge))
 	mhRinkeby := voter.NewEVMMessageHandler(rinkebyClient, common.HexToAddress(ethCfg.SharedEVMConfig.Bridge))
 	mhRinkeby.RegisterMessageHandler(common.HexToAddress(ethCfg.SharedEVMConfig.Erc20Handler), voter.ERC20MessageHandler)
-	evmVoter := voter.NewVoter(mhRinkeby, rinkebyClient, evmtransaction.NewTransaction, evmgaspricer.NewLondonGasPriceClient(rinkebyClient, nil))
-	evmChain := evm.NewEVMChain(evmListener, evmVoter, db, *ethCfg.SharedEVMConfig.GeneralChainConfig.Id, &ethCfg.SharedEVMConfig)
+	rinkebyVoter := voter.NewVoter(mhRinkeby, rinkebyClient, evmtransaction.NewTransaction, evmgaspricer.NewLondonGasPriceClient(rinkebyClient, nil))
+	rinkebyChain := evm.NewEVMChain(evmListener, rinkebyVoter, db, *ethCfg.SharedEVMConfig.GeneralChainConfig.Id, &ethCfg.SharedEVMConfig)
 
 	// celo setup
 	celoClient := evmclient.NewEVMClient()
@@ -75,13 +75,13 @@ func Run() error {
 	celoCfg := celoClient.GetConfig()
 	eventHandler = listener.NewETHEventHandler(common.HexToAddress(celoCfg.SharedEVMConfig.Bridge), celoClient)
 	eventHandler.RegisterEventHandler(celoCfg.SharedEVMConfig.Erc20Handler, listener.Erc20EventHandler)
-	celoListener1 := listener.NewEVMListener(celoClient, eventHandler, common.HexToAddress(celoCfg.SharedEVMConfig.Bridge))
+	celoListener := listener.NewEVMListener(celoClient, eventHandler, common.HexToAddress(celoCfg.SharedEVMConfig.Bridge))
 	mhCelo := voter.NewEVMMessageHandler(celoClient, common.HexToAddress(celoCfg.SharedEVMConfig.Bridge))
 	mhCelo.RegisterMessageHandler(common.HexToAddress(celoCfg.SharedEVMConfig.Erc20Handler), voter.ERC20MessageHandler)
 	celoVoter := voter.NewVoter(mhCelo, celoClient, evmtransaction.NewTransaction, evmgaspricer.NewLondonGasPriceClient(celoClient, nil))
-	celoChain := evm.NewEVMChain(celoListener1, celoVoter, db, *celoCfg.SharedEVMConfig.GeneralChainConfig.Id, &celoCfg.SharedEVMConfig)
+	celoChain := evm.NewEVMChain(celoListener, celoVoter, db, *celoCfg.SharedEVMConfig.GeneralChainConfig.Id, &celoCfg.SharedEVMConfig)
 
-	r := relayer.NewRelayer([]relayer.RelayedChain{evmChain, goerliChain, celoChain}, &opentelemetry.ConsoleTelemetry{})
+	r := relayer.NewRelayer([]relayer.RelayedChain{rinkebyChain, goerliChain, celoChain}, &opentelemetry.ConsoleTelemetry{})
 
 	go r.Start(stopChn, errChn)
 
