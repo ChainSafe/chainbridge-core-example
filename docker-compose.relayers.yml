@@ -1,0 +1,53 @@
+# Copyright 2020 ChainSafe Systems
+# SPDX-License-Identifier: LGPL-3.0-only
+version: '3'
+
+services:
+  relayer_1:
+    image: chainsafe/chainbridge-core-example:main
+    container_name: relayer_1
+    ports:
+      - "8545:8545"
+    volumes:
+      - ./config:/config
+      - ./keys:/keys
+    environment:
+      - KEYSTORE_PASSWORD=passwordpassword
+    command:
+      - run
+      - --config=/config/relayer_1
+      - --keystore=/keys
+      - --latest
+
+  relayer_2:
+    image: chainsafe/chainbridge-core-example:main
+    container_name: relayer_2
+    ports:
+      - "8550:8545"
+    volumes:
+      - ./config:/config
+      - ./keys:/keys
+    environment:
+      - KEYSTORE_PASSWORD=passwordpassword
+    command:
+      - run
+      - --config=/config/relayer_2
+      - --keystore=/keys
+      - --latest
+
+  relayer_3:
+    image: chainsafe/chainbridge-core-example:main
+    container_name: relayer_3
+    ports:
+      - "8555:8545"
+
+    volumes:
+      - ./config:/config
+      - ./keys:/keys
+    environment:
+      - KEYSTORE_PASSWORD=passwordpassword
+    command:
+      - run
+      - --config=/config/relayer_3
+      - --keystore=/keys
+      - --latest
