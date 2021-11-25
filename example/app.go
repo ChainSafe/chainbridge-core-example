@@ -8,6 +8,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/ChainSafe/chainbridge-celo-module/transaction"
 	"github.com/ChainSafe/chainbridge-core/chains/evm"
 	"github.com/ChainSafe/chainbridge-core/chains/evm/evmclient"
 	"github.com/ChainSafe/chainbridge-core/chains/evm/evmgaspricer"
@@ -78,7 +79,7 @@ func Run() error {
 	celoListener := listener.NewEVMListener(celoClient, eventHandler, common.HexToAddress(celoCfg.SharedEVMConfig.Bridge))
 	mhCelo := voter.NewEVMMessageHandler(celoClient, common.HexToAddress(celoCfg.SharedEVMConfig.Bridge))
 	mhCelo.RegisterMessageHandler(common.HexToAddress(celoCfg.SharedEVMConfig.Erc20Handler), voter.ERC20MessageHandler)
-	celoVoter := voter.NewVoter(mhCelo, celoClient, evmtransaction.NewTransaction, evmgaspricer.NewLondonGasPriceClient(celoClient, nil))
+	celoVoter := voter.NewVoter(mhCelo, celoClient, transaction.NewCeloTransaction, evmgaspricer.NewLondonGasPriceClient(celoClient, nil))
 	celoChain := evm.NewEVMChain(celoListener, celoVoter, db, *celoCfg.SharedEVMConfig.GeneralChainConfig.Id, &celoCfg.SharedEVMConfig)
 
 	r := relayer.NewRelayer([]relayer.RelayedChain{rinkebyChain, goerliChain, celoChain}, &opentelemetry.ConsoleTelemetry{})
