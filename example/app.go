@@ -10,17 +10,12 @@ import (
 
 	"github.com/ChainSafe/chainbridge-celo-module/transaction"
 	"github.com/ChainSafe/chainbridge-core/chains/evm"
-	"github.com/ChainSafe/chainbridge-core/chains/evm/evmclient"
-	"github.com/ChainSafe/chainbridge-core/chains/evm/evmgaspricer"
-	"github.com/ChainSafe/chainbridge-core/chains/evm/listener"
-	"github.com/ChainSafe/chainbridge-core/chains/evm/voter"
+	"github.com/ChainSafe/chainbridge-core/chains/evm/evmtransaction"
 	"github.com/ChainSafe/chainbridge-core/config"
-	"github.com/ChainSafe/chainbridge-core/config/chain"
 	"github.com/ChainSafe/chainbridge-core/flags"
 	"github.com/ChainSafe/chainbridge-core/lvldb"
 	"github.com/ChainSafe/chainbridge-core/opentelemetry"
 	"github.com/ChainSafe/chainbridge-core/relayer"
-	"github.com/ethereum/go-ethereum/common"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
 )
@@ -30,7 +25,6 @@ func Run() error {
 	stopChn := make(chan struct{})
 
 	configuration, err := config.GetConfig(viper.GetString(flags.ConfigFlagName))
-
 	db, err := lvldb.NewLvlDB(viper.GetString(flags.BlockstoreFlagName))
 	if err != nil {
 		panic(err)
@@ -41,7 +35,7 @@ func Run() error {
 		switch chainConfig["type"] {
 		case "evm":
 			{
-				chain, err := evm.SetupDefaultEVMChain(chainConfig, db)
+				chain, err := evm.SetupDefaultEVMChain(chainConfig, evmtransaction.NewTransaction, db)
 				if err != nil {
 					panic(err)
 				}
@@ -50,30 +44,12 @@ func Run() error {
 			}
 		case "celo":
 			{
-				config, err := chain.NewEVMConfig(chainConfig)
+				chain, err := evm.SetupDefaultEVMChain(chainConfig, transaction.NewCeloTransaction, db)
 				if err != nil {
 					panic(err)
 				}
 
-				client := evmclient.NewEVMClient()
-				err = client.Configurate(config)
-				if err != nil {
-					panic(err)
-				}
-
-				eventHandler := listener.NewETHEventHandler(common.HexToAddress(config.Bridge), client)
-				eventHandler.RegisterEventHandler(config.Erc20Handler, listener.Erc20EventHandler)
-				eventHandler.RegisterEventHandler(config.Erc721Handler, listener.Erc721EventHandler)
-				eventHandler.RegisterEventHandler(config.GenericHandler, listener.GenericEventHandler)
-				evmListener := listener.NewEVMListener(client, eventHandler, common.HexToAddress(config.Bridge))
-
-				mh := voter.NewEVMMessageHandler(client, common.HexToAddress(config.Bridge))
-				mh.RegisterMessageHandler(config.Erc20Handler, voter.ERC20MessageHandler)
-				mh.RegisterMessageHandler(config.Erc721Handler, voter.ERC721MessageHandler)
-				mh.RegisterMessageHandler(config.GenericHandler, voter.GenericMessageHandler)
-				evmVoter := voter.NewVoter(mh, client, transaction.NewCeloTransaction, evmgaspricer.NewLondonGasPriceClient(client, nil))
-
-				chains = append(chains, evm.NewEVMChain(evmListener, evmVoter, db, config))
+				chains = append(chains, chain)
 			}
 		}
 	}

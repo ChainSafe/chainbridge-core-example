@@ -8,7 +8,7 @@ go 1.15
 
 require (
 	github.com/ChainSafe/chainbridge-celo-module v0.0.0-20211123153704-07133071e1ce
-	github.com/ChainSafe/chainbridge-core v0.0.0-20211126100456-46d385089a1f
+	github.com/ChainSafe/chainbridge-core v0.0.0-20211126115136-4c0963129b63
 	github.com/rs/zerolog v1.26.0
 	github.com/spf13/cobra v1.2.1
 	github.com/spf13/viper v1.9.0
