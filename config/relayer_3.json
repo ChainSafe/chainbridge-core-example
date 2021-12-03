@@ -1,0 +1,41 @@
+{
+  "relayer": {},
+  "chains": [
+    {
+      "name": "celo",
+      "type": "celo",
+      "id": 2,
+      "endpoint": "wss://alfajores-forno.celo-testnet.org",
+      "from": "0x12F0aA01E222D3FBb999A1aD902dc70cbea7000b",
+      "bridge": "0x7B4ff372ec4159404c6d216C34F6d0B29F080665",
+      "erc20Handler": "0x442E7f13AA0cfAbF3FfaEfA4649f5fBe68ff9db2",
+      "gasLimit": 9000000,
+      "maxGasPrice": 2000000000,
+      "blockConfirmations": 10
+    },
+    {
+      "name": "goerli",
+      "type": "evm",
+      "id": 1,
+      "endpoint": "wss://eth-goerli.alchemyapi.io/v2/9jcoyKYv-uf2VMIALqA_ul6qBT5sXMJh",
+      "from": "0x12F0aA01E222D3FBb999A1aD902dc70cbea7000b",
+      "bridge": "0x537949Ad4d0CBf45E4Bb6B921FF49acD93cd040b",
+      "erc20Handler": "0x3c30b56DEd047fe6225f7004Ea4be1ae70C9026a",
+      "gasLimit": 9000000,
+      "maxGasPrice": 20000000000,
+      "blockConfirmations": 10
+    },
+    {
+      "name": "rinkeby",
+      "type": "evm",
+      "id": 0,
+      "endpoint": "wss://eth-rinkeby.alchemyapi.io/v2/Pgb6UvWBwyYNRyn1_19HqhSpbRtK-74W",
+      "from": "0x12F0aA01E222D3FBb999A1aD902dc70cbea7000b",
+      "bridge": "0x894E63d6eba8173a291A47979335a745788170Af",
+      "erc20Handler": "0xCAe16A9e0ED433C3612A89755e5580a9f0B6C889",
+      "gasLimit": 8000000,
+      "maxGasPrice": 20000000000,
+      "blockConfirmations": 10
+    }
+  ]
+}

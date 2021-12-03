@@ -13,7 +13,7 @@ services:
       - KEYSTORE_PASSWORD=passwordpassword
     command:
       - run
-      - --config=/config/relayer_1
+      - --config=/config/relayer_1.json
       - --keystore=/keys
       - --latest
 
@@ -27,7 +27,7 @@ services:
       - KEYSTORE_PASSWORD=passwordpassword
     command:
       - run
-      - --config=/config/relayer_2
+      - --config=/config/relayer_2.json
       - --keystore=/keys
       - --latest
 
@@ -41,6 +41,6 @@ services:
       - KEYSTORE_PASSWORD=passwordpassword
     command:
       - run
-      - --config=/config/relayer_3
+      - --config=/config/relayer_3.json
       - --keystore=/keys
       - --latest
