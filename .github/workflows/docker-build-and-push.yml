@@ -18,7 +18,7 @@ on:
     types:
       - created
   repository_dispatch:
-    types: [update-core-example]
+    types: [push-core-to-main-branch]
 # list jobs
 jobs:
   build-and-deploy:
