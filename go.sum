@@ -62,8 +62,8 @@ github.com/Azure/go-autorest/logger v0.1.0/go.mod h1:oExouG+K6PryycPJfVSxi/koC6L
 github.com/Azure/go-autorest/tracing v0.5.0/go.mod h1:r/s2XiOKccPW3HrqB+W0TQzfbtp2fGCgRFtBroKn4Dk=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
-github.com/ChainSafe/chainbridge-celo-module v0.0.0-20211123153704-07133071e1ce h1:fVit8XlI/OBBH0WO5/Yz5hDAEMMD1Et6HjVSR3PeHbw=
-github.com/ChainSafe/chainbridge-celo-module v0.0.0-20211123153704-07133071e1ce/go.mod h1:2e7GpGRwPGZeJBmIlrr4RPn2rQZrGq6MyB5w04Zy1wc=
+github.com/ChainSafe/chainbridge-celo-module v0.0.0-20211125083019-55c33ab406b4 h1:b9OOtkEk4BZOMzPHuPL5UNO3kw2R2qPjqtuPhQpRwkg=
+github.com/ChainSafe/chainbridge-celo-module v0.0.0-20211125083019-55c33ab406b4/go.mod h1:2e7GpGRwPGZeJBmIlrr4RPn2rQZrGq6MyB5w04Zy1wc=
 github.com/ChainSafe/chainbridge-core v0.0.0-20211119192835-f34d57d08455/go.mod h1:RHQYvnD5yQpMmyHRr0g1CL2+sWuII8qqU1kq67wdqe0=
 github.com/ChainSafe/chainbridge-core v0.0.0-20211126125725-1525c043927c h1:79xOkwA7RzNocmf/TSMIihtHJGrMflV+0xXj3MoRxeA=
 github.com/ChainSafe/chainbridge-core v0.0.0-20211126125725-1525c043927c/go.mod h1:Ce3XEZXHdQ2I5rcwoCOW0WuZ9T5lp3yMf550P28Z7wc=
