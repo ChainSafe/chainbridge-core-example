@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	"github.com/ChainSafe/chainbridge-celo-module/transaction"
-	"github.com/ChainSafe/chainbridge-core/chains/evm/evmtransaction"
+	"github.com/ChainSafe/chainbridge-core/chains/evm/calls/evmtransaction"
 	"github.com/ChainSafe/chainbridge-core/e2e/evm"
 	"github.com/ChainSafe/chainbridge-core/keystore"
 	"github.com/stretchr/testify/suite"

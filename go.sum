@@ -62,13 +62,10 @@ github.com/Azure/go-autorest/logger v0.1.0/go.mod h1:oExouG+K6PryycPJfVSxi/koC6L
 github.com/Azure/go-autorest/tracing v0.5.0/go.mod h1:r/s2XiOKccPW3HrqB+W0TQzfbtp2fGCgRFtBroKn4Dk=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
-github.com/ChainSafe/chainbridge-celo-module v0.0.0-20211123153704-07133071e1ce h1:fVit8XlI/OBBH0WO5/Yz5hDAEMMD1Et6HjVSR3PeHbw=
-github.com/ChainSafe/chainbridge-celo-module v0.0.0-20211123153704-07133071e1ce/go.mod h1:2e7GpGRwPGZeJBmIlrr4RPn2rQZrGq6MyB5w04Zy1wc=
-github.com/ChainSafe/chainbridge-core v0.0.0-20211119192835-f34d57d08455/go.mod h1:RHQYvnD5yQpMmyHRr0g1CL2+sWuII8qqU1kq67wdqe0=
-github.com/ChainSafe/chainbridge-core v0.0.0-20211126125725-1525c043927c h1:79xOkwA7RzNocmf/TSMIihtHJGrMflV+0xXj3MoRxeA=
-github.com/ChainSafe/chainbridge-core v0.0.0-20211126125725-1525c043927c/go.mod h1:Ce3XEZXHdQ2I5rcwoCOW0WuZ9T5lp3yMf550P28Z7wc=
-github.com/ChainSafe/chainbridge-core v0.0.0-20220105131100-36d560df628d h1:sxNbGjOPTaYFlGwhui25JY9UZxWLHCrIBug9UITcQiE=
-github.com/ChainSafe/chainbridge-core v0.0.0-20220105131100-36d560df628d/go.mod h1:pPeoZTMorrRL+bUOvLDa0P5pe8dZpNLNJBDq3ZE+O4M=
+github.com/ChainSafe/chainbridge-celo-module v0.0.0-20220107113949-c7fd9c5f44ac h1:AHQArsS7FJ+8dJLCczgCle3ZmpbmGemqri2lFqMyF5s=
+github.com/ChainSafe/chainbridge-celo-module v0.0.0-20220107113949-c7fd9c5f44ac/go.mod h1:X7Eo2sSDiuL5SHmHyl37dvA/x8kvhkn77WmpiTEYXM0=
+github.com/ChainSafe/chainbridge-core v0.0.0-20220107093555-abe81620e6a2 h1:X9Wy3JoQx2D2+eLJtOUUNXnqj8FifM5IGWwTXWXjwwY=
+github.com/ChainSafe/chainbridge-core v0.0.0-20220107093555-abe81620e6a2/go.mod h1:pPeoZTMorrRL+bUOvLDa0P5pe8dZpNLNJBDq3ZE+O4M=
 github.com/DATA-DOG/go-sqlmock v1.3.3/go.mod h1:f/Ixk793poVmq4qj/V1dPUg2JEAKC73Q5eFN3EC/SaM=
 github.com/OneOfOne/xxhash v1.2.2/go.mod h1:HSdplMjZKSmBqAxg5vPj2TmRDmfkzw+cTzAElWljhcU=
 github.com/OneOfOne/xxhash v1.2.5/go.mod h1:eZbhyaAYD41SGSSsnmcpxVoRiQ/MPUTjUdIIOT9Um7Q=
@@ -384,6 +381,8 @@ github.com/huin/goupnp v1.0.2/go.mod h1:0dxJBVBHqTMjIUMkESDTNgOOx/Mw5wYIfyFmdzSa
 github.com/huin/goutil v0.0.0-20170803182201-1ca381bf3150/go.mod h1:PpLOETDnJ0o3iZrZfqZzyLl6l7F3c6L1oWn7OICBi6o=
 github.com/ianlancetaylor/demangle v0.0.0-20181102032728-5e5cf60278f6/go.mod h1:aSSvb/t6k1mPoxDqO4vJh6VOCGPwU4O0C2/Eqndh1Sc=
 github.com/ianlancetaylor/demangle v0.0.0-20200824232613-28f6c0f3b639/go.mod h1:aSSvb/t6k1mPoxDqO4vJh6VOCGPwU4O0C2/Eqndh1Sc=
+github.com/imdario/mergo v0.3.12 h1:b6R2BslTbIEToALKP7LxUvijTsNI9TAe80pLWN2g/HU=
+github.com/imdario/mergo v0.3.12/go.mod h1:jmQim1M+e3UYxmgPu/WyfjB3N3VflVyUjjjwH0dnCYA=
 github.com/inconshreveable/mousetrap v1.0.0 h1:Z8tu5sraLXCXIcARxBp/8cbvlwVa7Z1NHg9XEKhtSvM=
 github.com/inconshreveable/mousetrap v1.0.0/go.mod h1:PxqpIevigyE2G7u3NXJIT2ANytuPF1OarO4DADm73n8=
 github.com/influxdata/flux v0.65.1/go.mod h1:J754/zds0vvpfwuq7Gc2wRdVwEodfpCFM7mYlOw2LqY=
