@@ -19,6 +19,7 @@ on:
       - created
   repository_dispatch:
     types: [push-core-to-main-branch]
+
 # list jobs
 jobs:
   build-and-deploy:
@@ -102,19 +103,20 @@ jobs:
       - run: |
           docker ps -a
           docker logs relayer
-  update-core-example:
+  push-core-to-main-branch:
     name: Update core-example dependencies
     runs-on: ubuntu-latest
     steps:
-      - name: Install go
-      - uses: actions/setup-go@v2
       - name: Checkout code
-      - uses: actions/checkout@v2
+        uses: actions/checkout@v2
+      - name: Setup go environment
+        uses: actions/setup-go@v2
         with:
-          ref: ${{ github.head_ref }}
-      - run: go get -u
+          go-version: ${{ matrix.go-version }}
+      - name: Update go mod and auto commit
+        run: go get -u
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          commit_message: Update go mod
+          commit_message: Updated repo with commit  ${{ github.event.client_payload.sha }}
       - name: Get merge commit that triggered update
-      - run: echo "Merge commit ${{ github.event.client_payload.sha }}"
+        run: echo "Merge commit ${{ github.event.client_payload.sha }}"
