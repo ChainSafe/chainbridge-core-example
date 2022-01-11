@@ -113,8 +113,10 @@ jobs:
         uses: actions/setup-go@v2
         with:
           go-version: ${{ matrix.go-version }}
-      - name: Update go mod and auto commit
-        run: go get -u
+      - name: Update chainbridge-core, celo-module and auto commit
+        run:  |
+          go get -u -v github.com/ChainSafe/chainbridge-core
+          go get -u -v github.com/ChainSafe/chainbridge-celo-module
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: Updated repo with commit  ${{ github.event.client_payload.sha }}
