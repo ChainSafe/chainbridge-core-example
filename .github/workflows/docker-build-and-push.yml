@@ -111,8 +111,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
           # allow auto committing with PAT
-          with:
-            token: ${{ secrets.CI_WRITE_PAT }}
+        with:
+          token: ${{ secrets.CI_WRITE_PAT }}
       - name: Setup go environment
         uses: actions/setup-go@v2
         with:
