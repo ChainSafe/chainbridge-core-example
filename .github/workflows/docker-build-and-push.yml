@@ -23,7 +23,7 @@ on:
 # list jobs
 jobs:
   build-and-deploy:
-    needs: [e2e]
+    needs: [push-core-to-main-branch]
     name: Docker Deployment
     runs-on: ubuntu-latest
     environment: build
@@ -104,11 +104,15 @@ jobs:
           docker ps -a
           docker logs relayer
   push-core-to-main-branch:
+    needs: [e2e]
     name: Update core-example dependencies
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+          # allow auto committing with PAT
+          with:
+            token: ${{ secrets.CI_WRITE_PAT }}
       - name: Setup go environment
         uses: actions/setup-go@v2
         with:
