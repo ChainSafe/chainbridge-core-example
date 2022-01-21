@@ -16,8 +16,8 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-const ETHEndpoint = "http://localhost:8845"
-const CeloEndpoint = "http://localhost:8546"
+const ETHEndpoint = "ws://localhost:8846"
+const CeloEndpoint = "ws://localhost:8546"
 
 var EveKp = keystore.TestKeyRing.EthereumKeys[keystore.EveKey]
 
