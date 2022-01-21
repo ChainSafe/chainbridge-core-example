@@ -7,6 +7,7 @@ package e2e_test
 import (
 	"testing"
 
+	"github.com/ChainSafe/chainbridge-celo-module/transaction"
 	"github.com/ChainSafe/chainbridge-core/chains/evm/calls/evmclient"
 	"github.com/ChainSafe/chainbridge-core/chains/evm/calls/evmtransaction"
 	"github.com/ChainSafe/chainbridge-core/chains/evm/cli/local"
@@ -36,7 +37,7 @@ func TestRunE2ETests(t *testing.T) {
 		t,
 		evm.SetupEVM2EVMTestSuite(
 			evmtransaction.NewTransaction,
-			evmtransaction.NewTransaction,
+			transaction.NewCeloTransaction,
 			ethClient,
 			celoClient,
 			local.DefaultRelayerAddresses,
