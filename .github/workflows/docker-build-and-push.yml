@@ -75,6 +75,7 @@ jobs:
           tags: ${{ steps.prep.outputs.tags }}
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
+
   e2e:
     name: E2E Tests
     strategy:
@@ -95,6 +96,10 @@ jobs:
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
+      - name: Update chainbridge-core, celo-module
+        run:  |
+          go get -u -v github.com/ChainSafe/chainbridge-core
+          go get -u -v github.com/ChainSafe/chainbridge-celo-module
       - name: Run nodes
         run: docker-compose -f ./docker-compose.e2e.yml up -d
       - name: Run tests
@@ -103,6 +108,7 @@ jobs:
       - run: |
           docker ps -a
           docker logs relayer
+
   push-core-to-main-branch:
     needs: [e2e]
     name: Update core-example dependencies
@@ -117,7 +123,7 @@ jobs:
         uses: actions/setup-go@v2
         with:
           go-version: ${{ matrix.go-version }}
-      - name: Update chainbridge-core, celo-module and auto commit
+      - name: Update chainbridge-core, celo-module
         run:  |
           go get -u -v github.com/ChainSafe/chainbridge-core
           go get -u -v github.com/ChainSafe/chainbridge-celo-module
