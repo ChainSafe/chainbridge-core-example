@@ -38,7 +38,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: run --config /cfg/config.json --testkey alice --fresh
+    command: run --config /cfg/evm_celo-config.json --testkey alice --fresh
     depends_on:
       - evm1
       - celo1
@@ -53,7 +53,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: run --config /cfg/config.json --testkey bob --fresh
+    command: run --config /cfg/evm_celo-config.json --testkey bob --fresh
     depends_on:
       - evm1
       - celo1
@@ -68,7 +68,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: run --config /cfg/config.json --testkey charlie --fresh
+    command: run --config /cfg/evm_celo-config.json --testkey charlie --fresh
     depends_on:
       - evm1
       - celo1
