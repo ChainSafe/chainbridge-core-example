@@ -17,7 +17,7 @@ import (
 )
 
 const ETHEndpoint = "ws://localhost:8846"
-const CeloEndpoint = "ws://localhost:8546"
+const CeloEndpoint = "ws://localhost:8545"
 
 var EveKp = keystore.TestKeyRing.EthereumKeys[keystore.EveKey]
 
