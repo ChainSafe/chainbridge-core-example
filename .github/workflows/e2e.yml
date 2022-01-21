@@ -35,4 +35,4 @@ jobs:
         if: always()
         run: |
           docker ps -a
-          docker logs relayer1-evm-optimism
+          docker logs relayer1
