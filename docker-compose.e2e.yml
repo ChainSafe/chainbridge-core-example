@@ -36,7 +36,7 @@ services:
   relayer1:
     container_name: relayer1
     build:
-      context: ../../.
+      context: .
       dockerfile: Dockerfile
     command: run --config /cfg/config.json --testkey alice --fresh
     depends_on:
@@ -51,7 +51,7 @@ services:
   relayer2:
     container_name: relayer2
     build:
-      context: ../../.
+      context: .
       dockerfile: Dockerfile
     command: run --config /cfg/config.json --testkey bob --fresh
     depends_on:
@@ -66,7 +66,7 @@ services:
   relayer3:
     container_name: relayer3
     build:
-      context: ../../.
+      context: .
       dockerfile: Dockerfile
     command: run --config /cfg/config.json --testkey charlie --fresh
     depends_on:
