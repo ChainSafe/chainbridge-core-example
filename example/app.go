@@ -16,6 +16,8 @@ import (
 	"github.com/ChainSafe/chainbridge-core/lvldb"
 	"github.com/ChainSafe/chainbridge-core/opentelemetry"
 	"github.com/ChainSafe/chainbridge-core/relayer"
+	"github.com/ChainSafe/chainbridge-core/store"
+	optimism "github.com/ChainSafe/chainbridge-optimism-module"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
 )
@@ -29,13 +31,14 @@ func Run() error {
 	if err != nil {
 		panic(err)
 	}
+	blockstore := store.NewBlockStore(db)
 
 	chains := []relayer.RelayedChain{}
 	for _, chainConfig := range configuration.ChainConfigs {
 		switch chainConfig["type"] {
 		case "evm":
 			{
-				chain, err := evm.SetupDefaultEVMChain(chainConfig, evmtransaction.NewTransaction, db)
+				chain, err := evm.SetupDefaultEVMChain(chainConfig, evmtransaction.NewTransaction, blockstore)
 				if err != nil {
 					panic(err)
 				}
@@ -44,7 +47,16 @@ func Run() error {
 			}
 		case "celo":
 			{
-				chain, err := evm.SetupDefaultEVMChain(chainConfig, transaction.NewCeloTransaction, db)
+				chain, err := evm.SetupDefaultEVMChain(chainConfig, transaction.NewCeloTransaction, blockstore)
+				if err != nil {
+					panic(err)
+				}
+
+				chains = append(chains, chain)
+			}
+		case "optimism":
+			{
+				chain, err := optimism.SetupDefaultOptimismChain(chainConfig, evmtransaction.NewTransaction, blockstore)
 				if err != nil {
 					panic(err)
 				}
