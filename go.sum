@@ -71,6 +71,8 @@ github.com/ChainSafe/chainbridge-celo-module v0.0.0-20220107113949-c7fd9c5f44ac/
 github.com/ChainSafe/chainbridge-core v0.0.0-20220107093555-abe81620e6a2/go.mod h1:pPeoZTMorrRL+bUOvLDa0P5pe8dZpNLNJBDq3ZE+O4M=
 github.com/ChainSafe/chainbridge-core v0.0.0-20220117151815-684ae464fb8d h1:tVTb3EiCN7AfH7OABarOs60KKlWWGSZpIw2RpyzORFc=
 github.com/ChainSafe/chainbridge-core v0.0.0-20220117151815-684ae464fb8d/go.mod h1:Nl4pM/lJ/Acf/mk4vDv9kXx5mvoupzz5Z8UpdTDUOjI=
+github.com/ChainSafe/chainbridge-core v0.0.0-20220120162654-c03a4d159125 h1:XQUh26x/12E7HkE8oOtyErYWJa6nSO87Y8efcg9yq9U=
+github.com/ChainSafe/chainbridge-core v0.0.0-20220120162654-c03a4d159125/go.mod h1:Nl4pM/lJ/Acf/mk4vDv9kXx5mvoupzz5Z8UpdTDUOjI=
 github.com/ChainSafe/chainbridge-optimism-module v0.0.0-20220120152056-f3c4c2e4ea5b h1:MRZFjkL2HUwAJKu/2ZjWIEN47oTlBZ4gbR/fE/lGTzI=
 github.com/ChainSafe/chainbridge-optimism-module v0.0.0-20220120152056-f3c4c2e4ea5b/go.mod h1:wFgJGRrir4cjA6/H04/SrGI7vMx+Huce5wHdQONCty0=
 github.com/DATA-DOG/go-sqlmock v1.3.3/go.mod h1:f/Ixk793poVmq4qj/V1dPUg2JEAKC73Q5eFN3EC/SaM=
