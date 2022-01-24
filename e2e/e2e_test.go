@@ -36,10 +36,10 @@ func TestRunE2ETests(t *testing.T) {
 	suite.Run(
 		t,
 		evm.SetupEVM2EVMTestSuite(
-			transaction.NewCeloTransaction,
 			evmtransaction.NewTransaction,
-			celoClient,
+			transaction.NewCeloTransaction,
 			ethClient,
+			celoClient,
 			local.DefaultRelayerAddresses,
 			local.DefaultRelayerAddresses,
 		),
