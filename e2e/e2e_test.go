@@ -7,6 +7,7 @@ package e2e_test
 import (
 	"testing"
 
+	"github.com/ChainSafe/chainbridge-celo-module/transaction"
 	"github.com/ChainSafe/chainbridge-core/chains/evm/calls/evmclient"
 	"github.com/ChainSafe/chainbridge-core/chains/evm/calls/evmtransaction"
 	"github.com/ChainSafe/chainbridge-core/chains/evm/cli/local"
@@ -15,8 +16,8 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-const ETHEndpoint = "http://localhost:8845"
-const CeloEndpoint = "http://localhost:8546"
+const ETHEndpoint = "ws://localhost:8846"
+const CeloEndpoint = "ws://localhost:8545"
 
 var EveKp = keystore.TestKeyRing.EthereumKeys[keystore.EveKey]
 
@@ -36,7 +37,7 @@ func TestRunE2ETests(t *testing.T) {
 		t,
 		evm.SetupEVM2EVMTestSuite(
 			evmtransaction.NewTransaction,
-			evmtransaction.NewTransaction,
+			transaction.NewCeloTransaction,
 			ethClient,
 			celoClient,
 			local.DefaultRelayerAddresses,
