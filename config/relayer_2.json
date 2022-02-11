@@ -36,6 +36,18 @@
       "gasLimit": 8000000,
       "maxGasPrice": 20000000000,
       "blockConfirmations": 10
+    },
+    {
+      "name": "polygon",
+      "type": "evm",
+      "id":3,
+      "endpoint":"wss://polygon-mumbai.g.alchemy.com/v2/NVK896meM89QkTJi7AmkHc8MaRa0z1PL",
+      "from":"0x06A93957b3824d533d9E1452979B2FBD4Aa32A61",
+      "bridge":"0xd1BB2D0f09E35d47d06e62c9c25421BB2Be77DAE",
+      "erc20Handler":"0x97E3650BB89025cB1cDda3aB8A77BD702f0aBFb6",
+      "gasLimit":8000000,
+      "maxGasPrice":20000000000,
+      "blockConfirmations":10
     }
   ]
 }
