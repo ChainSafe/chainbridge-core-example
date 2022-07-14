@@ -1,9 +1,9 @@
-# Chainbridge example
+# Sygma example
 <a href="https://discord.gg/ykXsJKfhgq">
   <img alt="discord" src="https://img.shields.io/discord/593655374469660673?label=Discord&logo=discord&style=flat" />
 </a>
 
-ChainBridge example is the repository that show an example of running Bridge with chainbridge-core [framework](https://github.com/ChainSafe/chainbridge-core).
+Sygma example is the repository that show an example of running Bridge with chainbridge-core [framework](https://github.com/ChainSafe/chainbridge-core).
 
 1. [Installation](#installation)
 2. [Global Flags](#global-flags)
